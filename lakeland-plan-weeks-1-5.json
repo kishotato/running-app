@@ -1,0 +1,1809 @@
+{
+  "schemaVersion": "1.0",
+  "plan": {
+    "name": "Lakeland 100 Training Plan",
+    "startDate": "2026-11-02",
+    "endDate": "2027-07-25",
+    "totalWeeks": 38,
+    "exportedWeeks": [
+      1,
+      5
+    ],
+    "units": {
+      "distance": "km",
+      "pace": "min/km",
+      "heartRate": "bpm"
+    },
+    "lthr": 166,
+    "maxHr": 187,
+    "races": [
+      {
+        "name": "Brighton Half Marathon",
+        "priority": "C",
+        "date": "2027-02-28",
+        "distanceKm": 21.1,
+        "goal": "sub-1:30"
+      },
+      {
+        "name": "Tarnovo Ultra 50k",
+        "priority": "B",
+        "date": "2027-04-17",
+        "dateConfirmed": false,
+        "distanceKm": 50,
+        "goal": null
+      },
+      {
+        "name": "Lakeland 100",
+        "priority": "A",
+        "date": "2027-07-23",
+        "distanceKm": null,
+        "goal": "30–32h"
+      }
+    ]
+  },
+  "zones": [
+    {
+      "zone": 1,
+      "name": "Recovery",
+      "lthrPct": {
+        "min": 65,
+        "max": 81
+      },
+      "hr": {
+        "min": 108,
+        "max": 134
+      },
+      "pace": {
+        "fast": "6:10",
+        "slow": null
+      }
+    },
+    {
+      "zone": 2,
+      "name": "Easy",
+      "lthrPct": {
+        "min": 81,
+        "max": 89
+      },
+      "hr": {
+        "min": 135,
+        "max": 148
+      },
+      "pace": {
+        "fast": "5:30",
+        "slow": "6:10"
+      }
+    },
+    {
+      "zone": 3,
+      "name": "Steady",
+      "lthrPct": {
+        "min": 90,
+        "max": 95
+      },
+      "hr": {
+        "min": 149,
+        "max": 158
+      },
+      "pace": {
+        "fast": "4:45",
+        "slow": "5:20"
+      }
+    },
+    {
+      "zone": 4,
+      "name": "Threshold",
+      "lthrPct": {
+        "min": 96,
+        "max": 101
+      },
+      "hr": {
+        "min": 159,
+        "max": 168
+      },
+      "pace": {
+        "fast": "4:20",
+        "slow": "4:35"
+      }
+    },
+    {
+      "zone": 5,
+      "name": "Intervals",
+      "lthrPct": {
+        "min": 102,
+        "max": 113
+      },
+      "hr": {
+        "min": 169,
+        "max": 187
+      },
+      "pace": {
+        "fast": "3:55",
+        "slow": "4:15"
+      }
+    }
+  ],
+  "strengthLibrary": {
+    "A-base": {
+      "name": "Strength A",
+      "variant": "base",
+      "durationMin": 40,
+      "restSec": {
+        "min": 60,
+        "max": 90
+      },
+      "exercises": [
+        {
+          "name": "Goblet squat",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Bulgarian split squat",
+          "sets": 3,
+          "reps": "8",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Single-leg RDL",
+          "sets": 3,
+          "reps": "8",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Step-ups",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Single-leg calf raise",
+          "sets": 3,
+          "reps": "15",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Dead bug",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        }
+      ]
+    },
+    "B-base": {
+      "name": "Strength B",
+      "variant": "base",
+      "durationMin": 40,
+      "restSec": {
+        "min": 60,
+        "max": 90
+      },
+      "exercises": [
+        {
+          "name": "Reverse lunge",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Dumbbell RDL",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Lateral lunge",
+          "sets": 3,
+          "reps": "8",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Bent-over row",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Overhead press",
+          "sets": 3,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Side plank",
+          "sets": 3,
+          "reps": null,
+          "durationSec": 30,
+          "perSide": true,
+          "notes": null
+        }
+      ]
+    },
+    "A-light": {
+      "name": "Strength A",
+      "variant": "light",
+      "durationMin": 25,
+      "restSec": {
+        "min": 60,
+        "max": 90
+      },
+      "exercises": [
+        {
+          "name": "Goblet squat",
+          "sets": 2,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Bulgarian split squat",
+          "sets": 2,
+          "reps": "8",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Single-leg RDL",
+          "sets": 2,
+          "reps": "8",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Single-leg calf raise",
+          "sets": 2,
+          "reps": "15",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Dead bug",
+          "sets": 2,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        }
+      ]
+    },
+    "B-light": {
+      "name": "Strength B",
+      "variant": "light",
+      "durationMin": 25,
+      "restSec": {
+        "min": 60,
+        "max": 90
+      },
+      "exercises": [
+        {
+          "name": "Reverse lunge",
+          "sets": 2,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": true,
+          "notes": null
+        },
+        {
+          "name": "Dumbbell RDL",
+          "sets": 2,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Bent-over row",
+          "sets": 2,
+          "reps": "10",
+          "durationSec": null,
+          "perSide": false,
+          "notes": null
+        },
+        {
+          "name": "Side plank",
+          "sets": 2,
+          "reps": null,
+          "durationSec": 30,
+          "perSide": true,
+          "notes": null
+        }
+      ]
+    }
+  },
+  "weeks": [
+    {
+      "weekNumber": 1,
+      "startDate": "2026-11-02",
+      "endDate": "2026-11-08",
+      "phase": "Base 1",
+      "isDownWeek": false,
+      "totalKm": 58,
+      "events": [
+        "Plan starts"
+      ],
+      "days": [
+        {
+          "date": "2026-11-02",
+          "dayOfWeek": "Monday",
+          "isRestDay": false,
+          "plannedDistanceKm": 7,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 7,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "A-base"
+            }
+          ],
+          "notes": {
+            "planned": "Plan starts",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-03",
+          "dayOfWeek": "Tuesday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-04",
+          "dayOfWeek": "Wednesday",
+          "isRestDay": false,
+          "plannedDistanceKm": 10,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "threshold",
+              "title": "Threshold",
+              "distanceKm": 10,
+              "zones": [
+                4
+              ],
+              "warmup": {
+                "distanceKm": 2.5,
+                "zones": [
+                  1,
+                  2
+                ],
+                "description": null,
+                "strides": null
+              },
+              "main": {
+                "pace": {
+                  "fast": "4:25",
+                  "slow": "4:30"
+                },
+                "intervals": {
+                  "reps": 3,
+                  "workDurationMin": 8,
+                  "workDistanceM": null,
+                  "label": "3x8mins"
+                },
+                "strides": null,
+                "target": null
+              },
+              "recovery": {
+                "description": "2min jog",
+                "durationSec": 120,
+                "type": "jog"
+              },
+              "cooldown": {
+                "distanceKm": 1.5,
+                "zones": [
+                  1
+                ],
+                "description": null,
+                "strides": null
+              }
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "B-base"
+            }
+          ],
+          "notes": {
+            "planned": "Keep HR under 168",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-05",
+          "dayOfWeek": "Thursday",
+          "isRestDay": false,
+          "plannedDistanceKm": 7,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 7,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": {
+                  "count": 6,
+                  "durationSec": 20,
+                  "recoverySec": 60,
+                  "recoveryType": "walk/jog"
+                },
+                "target": null
+              },
+              "recovery": {
+                "description": "60s walk/jog between strides",
+                "durationSec": 60,
+                "type": "walk/jog"
+              },
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-06",
+          "dayOfWeek": "Friday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-07",
+          "dayOfWeek": "Saturday",
+          "isRestDay": false,
+          "plannedDistanceKm": 22,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "long",
+              "title": "Long easy",
+              "distanceKm": 22,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": "Trail if possible · Fuel every 30–40min",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-08",
+          "dayOfWeek": "Sunday",
+          "isRestDay": false,
+          "plannedDistanceKm": 12,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 12,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        }
+      ]
+    },
+    {
+      "weekNumber": 2,
+      "startDate": "2026-11-09",
+      "endDate": "2026-11-15",
+      "phase": "Base 1",
+      "isDownWeek": false,
+      "totalKm": 62,
+      "events": [
+        "10k time trial (sets paces)"
+      ],
+      "days": [
+        {
+          "date": "2026-11-09",
+          "dayOfWeek": "Monday",
+          "isRestDay": false,
+          "plannedDistanceKm": 6,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 6,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "A-base"
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-10",
+          "dayOfWeek": "Tuesday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-11",
+          "dayOfWeek": "Wednesday",
+          "isRestDay": false,
+          "plannedDistanceKm": 14,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "time_trial",
+              "title": "10k time trial",
+              "distanceKm": 14,
+              "zones": [
+                4,
+                5
+              ],
+              "warmup": {
+                "distanceKm": 2,
+                "zones": [
+                  1,
+                  2
+                ],
+                "description": null,
+                "strides": {
+                  "count": 4,
+                  "durationSec": 20,
+                  "recoverySec": 60,
+                  "recoveryType": "walk/jog"
+                }
+              },
+              "main": {
+                "pace": null,
+                "intervals": null,
+                "strides": null,
+                "target": {
+                  "distanceKm": 10,
+                  "description": "All-out, even pacing",
+                  "timeFast": "43:00",
+                  "timeSlow": "45:00"
+                }
+              },
+              "recovery": null,
+              "cooldown": {
+                "distanceKm": 2,
+                "zones": [
+                  1
+                ],
+                "description": null,
+                "strides": null
+              }
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "B-light"
+            }
+          ],
+          "notes": {
+            "planned": "Record time trial result to set paces",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-12",
+          "dayOfWeek": "Thursday",
+          "isRestDay": false,
+          "plannedDistanceKm": 6,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "recovery",
+              "title": "Recovery",
+              "distanceKm": 6,
+              "zones": [
+                1
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "6:10",
+                  "slow": null
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-13",
+          "dayOfWeek": "Friday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-14",
+          "dayOfWeek": "Saturday",
+          "isRestDay": false,
+          "plannedDistanceKm": 24,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "long",
+              "title": "Long easy",
+              "distanceKm": 24,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": "Trail if possible · Fuel every 30–40min",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-15",
+          "dayOfWeek": "Sunday",
+          "isRestDay": false,
+          "plannedDistanceKm": 12,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 12,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        }
+      ]
+    },
+    {
+      "weekNumber": 3,
+      "startDate": "2026-11-16",
+      "endDate": "2026-11-22",
+      "phase": "Base 1",
+      "isDownWeek": false,
+      "totalKm": 66,
+      "events": [],
+      "days": [
+        {
+          "date": "2026-11-16",
+          "dayOfWeek": "Monday",
+          "isRestDay": false,
+          "plannedDistanceKm": 8,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 8,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "A-base"
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-17",
+          "dayOfWeek": "Tuesday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-18",
+          "dayOfWeek": "Wednesday",
+          "isRestDay": false,
+          "plannedDistanceKm": 11,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "threshold",
+              "title": "Threshold",
+              "distanceKm": 11,
+              "zones": [
+                4
+              ],
+              "warmup": {
+                "distanceKm": 2.5,
+                "zones": [
+                  1,
+                  2
+                ],
+                "description": null,
+                "strides": null
+              },
+              "main": {
+                "pace": {
+                  "fast": "4:25",
+                  "slow": "4:30"
+                },
+                "intervals": {
+                  "reps": 3,
+                  "workDurationMin": 10,
+                  "workDistanceM": null,
+                  "label": "3x10mins"
+                },
+                "strides": null,
+                "target": null
+              },
+              "recovery": {
+                "description": "2min jog",
+                "durationSec": 120,
+                "type": "jog"
+              },
+              "cooldown": {
+                "distanceKm": 1.5,
+                "zones": [
+                  1
+                ],
+                "description": null,
+                "strides": null
+              }
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "B-base"
+            }
+          ],
+          "notes": {
+            "planned": "Keep HR under 168",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-19",
+          "dayOfWeek": "Thursday",
+          "isRestDay": false,
+          "plannedDistanceKm": 7,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 7,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": {
+                  "count": 6,
+                  "durationSec": 20,
+                  "recoverySec": 60,
+                  "recoveryType": "walk/jog"
+                },
+                "target": null
+              },
+              "recovery": {
+                "description": "60s walk/jog between strides",
+                "durationSec": 60,
+                "type": "walk/jog"
+              },
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-20",
+          "dayOfWeek": "Friday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-21",
+          "dayOfWeek": "Saturday",
+          "isRestDay": false,
+          "plannedDistanceKm": 26,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "long",
+              "title": "Long easy",
+              "distanceKm": 26,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": "Fuel every 30–40min",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-22",
+          "dayOfWeek": "Sunday",
+          "isRestDay": false,
+          "plannedDistanceKm": 14,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 14,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        }
+      ]
+    },
+    {
+      "weekNumber": 4,
+      "startDate": "2026-11-23",
+      "endDate": "2026-11-29",
+      "phase": "Base 1",
+      "isDownWeek": false,
+      "totalKm": 70,
+      "events": [],
+      "days": [
+        {
+          "date": "2026-11-23",
+          "dayOfWeek": "Monday",
+          "isRestDay": false,
+          "plannedDistanceKm": 8,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 8,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "A-base"
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-24",
+          "dayOfWeek": "Tuesday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-25",
+          "dayOfWeek": "Wednesday",
+          "isRestDay": false,
+          "plannedDistanceKm": 11,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "intervals",
+              "title": "Intervals",
+              "distanceKm": 11,
+              "zones": [
+                5
+              ],
+              "warmup": {
+                "distanceKm": 3,
+                "zones": [
+                  1,
+                  2
+                ],
+                "description": null,
+                "strides": {
+                  "count": 4,
+                  "durationSec": 20,
+                  "recoverySec": 60,
+                  "recoveryType": "walk/jog"
+                }
+              },
+              "main": {
+                "pace": {
+                  "fast": "4:00",
+                  "slow": "4:00"
+                },
+                "intervals": {
+                  "reps": 6,
+                  "workDurationMin": null,
+                  "workDistanceM": 800,
+                  "label": "6x800m"
+                },
+                "strides": null,
+                "target": null
+              },
+              "recovery": {
+                "description": "90s jog",
+                "durationSec": 90,
+                "type": "jog"
+              },
+              "cooldown": {
+                "distanceKm": 2,
+                "zones": [
+                  1
+                ],
+                "description": null,
+                "strides": null
+              }
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "B-base"
+            }
+          ],
+          "notes": {
+            "planned": "Last rep as fast as the first",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-26",
+          "dayOfWeek": "Thursday",
+          "isRestDay": false,
+          "plannedDistanceKm": 8,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 8,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-27",
+          "dayOfWeek": "Friday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-28",
+          "dayOfWeek": "Saturday",
+          "isRestDay": false,
+          "plannedDistanceKm": 28,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "long",
+              "title": "Long easy",
+              "distanceKm": 28,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": "Fuel every 30–40min",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-11-29",
+          "dayOfWeek": "Sunday",
+          "isRestDay": false,
+          "plannedDistanceKm": 15,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 15,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        }
+      ]
+    },
+    {
+      "weekNumber": 5,
+      "startDate": "2026-11-30",
+      "endDate": "2026-12-06",
+      "phase": "Base 1",
+      "isDownWeek": true,
+      "totalKm": 55,
+      "events": [
+        "Down week"
+      ],
+      "days": [
+        {
+          "date": "2026-11-30",
+          "dayOfWeek": "Monday",
+          "isRestDay": false,
+          "plannedDistanceKm": 7,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 7,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "A-light"
+            }
+          ],
+          "notes": {
+            "planned": "Down week",
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-01",
+          "dayOfWeek": "Tuesday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-02",
+          "dayOfWeek": "Wednesday",
+          "isRestDay": false,
+          "plannedDistanceKm": 10,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "threshold",
+              "title": "Threshold",
+              "distanceKm": 10,
+              "zones": [
+                4
+              ],
+              "warmup": {
+                "distanceKm": 2.5,
+                "zones": [
+                  1,
+                  2
+                ],
+                "description": null,
+                "strides": null
+              },
+              "main": {
+                "pace": {
+                  "fast": "4:25",
+                  "slow": "4:30"
+                },
+                "intervals": {
+                  "reps": 2,
+                  "workDurationMin": 12,
+                  "workDistanceM": null,
+                  "label": "2x12mins"
+                },
+                "strides": null,
+                "target": null
+              },
+              "recovery": {
+                "description": "3min jog",
+                "durationSec": 180,
+                "type": "jog"
+              },
+              "cooldown": {
+                "distanceKm": 2,
+                "zones": [
+                  1
+                ],
+                "description": null,
+                "strides": null
+              }
+            },
+            {
+              "slot": "PM",
+              "type": "strength",
+              "strengthId": "B-light"
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-03",
+          "dayOfWeek": "Thursday",
+          "isRestDay": false,
+          "plannedDistanceKm": 8,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 8,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:30",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": {
+                  "count": 6,
+                  "durationSec": 20,
+                  "recoverySec": 60,
+                  "recoveryType": "walk/jog"
+                },
+                "target": null
+              },
+              "recovery": {
+                "description": "60s walk/jog between strides",
+                "durationSec": 60,
+                "type": "walk/jog"
+              },
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-04",
+          "dayOfWeek": "Friday",
+          "isRestDay": true,
+          "plannedDistanceKm": 0,
+          "sessions": [],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-05",
+          "dayOfWeek": "Saturday",
+          "isRestDay": false,
+          "plannedDistanceKm": 20,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "long",
+              "title": "Long easy",
+              "distanceKm": 20,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        },
+        {
+          "date": "2026-12-06",
+          "dayOfWeek": "Sunday",
+          "isRestDay": false,
+          "plannedDistanceKm": 10,
+          "sessions": [
+            {
+              "slot": "AM",
+              "type": "run",
+              "runType": "easy",
+              "title": "Easy",
+              "distanceKm": 10,
+              "zones": [
+                2
+              ],
+              "warmup": null,
+              "main": {
+                "pace": {
+                  "fast": "5:40",
+                  "slow": "6:10"
+                },
+                "intervals": null,
+                "strides": null,
+                "target": null
+              },
+              "recovery": null,
+              "cooldown": null
+            }
+          ],
+          "notes": {
+            "planned": null,
+            "user": ""
+          },
+          "log": {
+            "completed": false,
+            "actualDistanceKm": null,
+            "actualDurationMin": null,
+            "avgHr": null,
+            "rpe": null
+          }
+        }
+      ]
+    }
+  ]
+}
