@@ -25,6 +25,17 @@ export function ProgressBar({ value, max, label }) {
   )
 }
 
+/** AM = little yellow sun, PM = little crescent moon. */
+export function SlotIcon({ slot }) {
+  if (slot !== 'AM' && slot !== 'PM') return slot ? <span className="slot">{slot}</span> : null
+  const am = slot === 'AM'
+  return (
+    <span className={`slot-icon ${am ? 'sun' : 'moon'}`} role="img" aria-label={slot}>
+      <Icon name={am ? 'sun' : 'moon'} size={16} strokeWidth={am ? 2.2 : 1.5} />
+    </span>
+  )
+}
+
 /** Round tick button. Stops the tap from also opening the session. */
 export function DoneButton({ done, onToggle, size = 'md' }) {
   return (

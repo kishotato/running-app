@@ -4,6 +4,7 @@ import { runsOf, weekIndexFor } from '../lib/plan.js'
 import { paceRange } from '../lib/pace.js'
 import { weekStats } from '../lib/stats.js'
 import { zoneColor, zoneLabel } from '../lib/zones.js'
+import Icon from '../components/Icon.jsx'
 import DayBlock from '../components/DayBlock.jsx'
 import SessionRow from '../components/SessionRow.jsx'
 import { DoneButton, ProgressBar } from '../components/ui.jsx'
@@ -80,7 +81,7 @@ function TodayCard({ day, onOpenSession }) {
     return (
       <div className="card flat today-card rest-card">
         <p className="eyebrow">Today</p>
-        <div className="today-title">Rest day</div>
+        <div className="today-title rest-title"><Icon name="bed" size={26} /> Rest day</div>
         <p className="muted">Recover well. {day.notes?.planned || ''}</p>
       </div>
     )

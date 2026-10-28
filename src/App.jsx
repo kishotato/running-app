@@ -45,7 +45,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <main className="screen" aria-hidden={route.sessionId ? true : undefined}>
+      <main key={route.tab} className="screen" aria-hidden={route.sessionId ? true : undefined}>
         <Screen onOpenSession={openSession} />
       </main>
       {route.sessionId && <SessionDetail id={route.sessionId} onClose={closeSession} />}

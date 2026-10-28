@@ -2,7 +2,7 @@ import { useStore } from '../store.jsx'
 import { sessionLabel } from '../lib/plan.js'
 import { paceRange } from '../lib/pace.js'
 import { zoneColor, zoneLabel } from '../lib/zones.js'
-import { DoneButton } from './ui.jsx'
+import { DoneButton, SlotIcon } from './ui.jsx'
 import Icon from './Icon.jsx'
 
 /** One run or strength session as a tappable row with a done tick. */
@@ -21,9 +21,9 @@ export default function SessionRow({ session, onOpen }) {
       style={{ '--accent-bar': isRun ? zoneColor(session.zones) : 'var(--strength)' }}>
       <div className="session-main">
         <div className="session-title">
-          {!isRun && <Icon name="dumbbell" size={16} />}
+          <Icon name={isRun ? 'run' : 'dumbbell'} size={16} />
           <span>{sessionLabel(session, plan.strength)}</span>
-          {session.slot && <span className="slot">{session.slot}</span>}
+          <SlotIcon slot={session.slot} />
         </div>
         {detail && <div className="session-detail">{detail}</div>}
       </div>

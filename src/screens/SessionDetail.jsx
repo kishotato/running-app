@@ -5,17 +5,33 @@ import { sessionLabel } from '../lib/plan.js'
 import { paceFrom, paceRange } from '../lib/pace.js'
 import { hrZones, zoneColor, zoneLabel } from '../lib/zones.js'
 import Icon from '../components/Icon.jsx'
+import { DoneButton } from '../components/ui.jsx'
 
 const FEELS = [
-  { value: 'great', label: 'Great', emoji: '🔥' },
-  { value: 'good', label: 'Good', emoji: '🙂' },
-  { value: 'ok', label: 'OK', emoji: '😐' },
-  { value: 'tough', label: 'Tough', emoji: '😓' },
-  { value: 'bad', label: 'Bad', emoji: '🤕' },
+  { value: 'great', label: 'Great' },
+  { value: 'good', label: 'Good' },
+  { value: 'ok', label: 'OK' },
+  { value: 'tough', label: 'Tough' },
+  { value: 'bad', label: 'Bad' },
 ]
 
+const RPE_SCALE = [
+  [1, 'Very light', 'Barely any effort, like a slow walk.'],
+  [2, 'Light', 'Very easy. You could chat all day.'],
+  [3, 'Easy', 'Comfortable. Full sentences, no problem.'],
+  [4, 'Moderate', 'Warming up. Breathing a little deeper.'],
+  [5, 'Steady', 'Working but controlled. Short sentences.'],
+  [6, 'Somewhat hard', 'Breathing is heavy. A few words at a time.'],
+  [7, 'Hard', 'Uncomfortable but sustainable for a while.'],
+  [8, 'Very hard', 'Hard to keep going. Only a word or two.'],
+  [9, 'Near max', 'Almost all-out. You can hold it only briefly.'],
+  [10, 'Max effort', 'Absolute limit. Nothing left.'],
+]
+// Blue (easy) through green, yellow and orange to red (max).
+const rpeColor = (n) => `hsl(${Math.round(210 - ((n - 1) / 9) * 210)} 70% 58%)`
+
 export default function SessionDetail({ id, onClose }) {
-  const { plan } = useStore()
+  const { plan, logs, toggleDone } = useStore()
   const session = plan.sessions[id]
 
   // Lock the page behind the sheet so only the sheet scrolls.
@@ -29,6 +45,7 @@ export default function SessionDetail({ id, onClose }) {
       <header className="sheet-head">
         <button type="button" className="icon-btn" onClick={onClose} aria-label="Back"><Icon name="back" /></button>
         <span className="muted">{session ? formatDay(session.date, { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</span>
+        {session && <DoneButton done={!!logs[id]?.completed} onToggle={() => toggleDone(id)} />}
       </header>
       <div className="sheet-body">
         {!session
@@ -104,7 +121,7 @@ function RunInfo({ session }) {
         </Block>
       )}
 
-      {day.notes?.planned && <Block title="Coach notes"><p>{day.notes.planned}</p></Block>}
+      {day.notes?.planned && <Block title="Run notes"><p>{day.notes.planned}</p></Block>}
     </>
   )
 }
@@ -147,7 +164,6 @@ function LogForm({ session, onSaved }) {
   const existing = logs[session.id] || {}
   const isRun = session.type === 'run'
   const [form, setForm] = useState({
-    completed: existing.completed ?? false,
     distanceKm: existing.distanceKm ?? '',
     duration: existing.duration ?? '',
     avgHr: existing.avgHr ?? '',
@@ -155,6 +171,7 @@ function LogForm({ session, onSaved }) {
     feel: existing.feel ?? null,
     notes: existing.notes ?? '',
   })
+  const [showRpe, setShowRpe] = useState(false)
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e?.target ? e.target.value : e }))
   const pace = isRun ? paceFrom(Number(form.distanceKm), form.duration) : null
 
@@ -162,18 +179,13 @@ function LogForm({ session, onSaved }) {
     e.preventDefault()
     // Logging any details implies you did the session.
     const anyDetail = form.distanceKm !== '' || form.duration !== '' || form.rpe || form.feel
-    saveLog(session.id, { ...form, completed: form.completed || !!anyDetail, pace })
+    saveLog(session.id, { ...form, completed: !!existing.completed || !!anyDetail, pace })
     onSaved()
   }
 
   return (
     <form className="card flat log-form" onSubmit={submit}>
       <h3>Log</h3>
-
-      <label className="toggle-row">
-        <input type="checkbox" checked={form.completed} onChange={(e) => setForm((f) => ({ ...f, completed: e.target.checked }))} />
-        <span>Completed</span>
-      </label>
 
       {isRun && (
         <div className="field-grid">
@@ -197,27 +209,33 @@ function LogForm({ session, onSaved }) {
         </div>
       )}
 
-      <fieldset className="field">
-        <legend>RPE (effort 1–10)</legend>
+      <div className="field" role="group" aria-labelledby="rpe-label">
+        <span id="rpe-label" className="label-row">
+          RPE (effort 1–10)
+          <button type="button" className="help-btn" aria-label="What do the RPE numbers mean?" onClick={() => setShowRpe(true)}>
+            <Icon name="help" size={16} strokeWidth={2.4} />
+          </button>
+        </span>
         <div className="chip-row rpe">
           {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
             <button key={n} type="button" className={`chip${form.rpe === n ? ' active' : ''}`}
+              style={form.rpe === n ? { background: rpeColor(n), color: '#111' } : undefined}
               aria-pressed={form.rpe === n} onClick={() => set('rpe')(form.rpe === n ? null : n)}>{n}</button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset className="field">
-        <legend>How did it feel?</legend>
-        <div className="chip-row">
+      <div className="field" role="group" aria-labelledby="feel-label">
+        <span id="feel-label">How did it feel?</span>
+        <div className="chip-row feel-row">
           {FEELS.map((f) => (
-            <button key={f.value} type="button" className={`chip feel${form.feel === f.value ? ' active' : ''}`}
+            <button key={f.value} type="button" className={`chip${form.feel === f.value ? ' active' : ''}`}
               aria-pressed={form.feel === f.value} onClick={() => set('feel')(form.feel === f.value ? null : f.value)}>
-              <span aria-hidden="true">{f.emoji}</span> {f.label}
+              {f.label}
             </button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
       <label className="field">
         <span>Notes</span>
@@ -225,7 +243,32 @@ function LogForm({ session, onSaved }) {
       </label>
 
       <button type="submit" className="btn primary block">Save</button>
+      {showRpe && <RpeDialog onClose={() => setShowRpe(false)} />}
     </form>
+  )
+}
+
+/** Centred popup (a modal, not a popover) explaining each RPE number. */
+function RpeDialog({ onClose }) {
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby="rpe-title" onClick={(e) => e.stopPropagation()}>
+        <div className="row-between">
+          <h3 id="rpe-title">RPE: rate of perceived effort</h3>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label="Close"><Icon name="close" /></button>
+        </div>
+        <p className="muted small">How hard the run felt, from 1 (very easy) to 10 (all-out).</p>
+        <ul className="rpe-list">
+          {RPE_SCALE.map(([n, name, desc]) => (
+            <li key={n}>
+              <span className="rpe-num" style={{ background: rpeColor(n) }}>{n}</span>
+              <span><strong>{name}</strong><br /><span className="muted small">{desc}</span></span>
+            </li>
+          ))}
+        </ul>
+        <button type="button" className="btn primary block" onClick={onClose}>Got it</button>
+      </div>
+    </div>
   )
 }
 

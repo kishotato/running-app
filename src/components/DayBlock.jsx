@@ -1,4 +1,5 @@
 import { formatDay, todayISO } from '../lib/dates.js'
+import Icon from './Icon.jsx'
 import SessionRow from './SessionRow.jsx'
 
 /** A day heading followed by its sessions (or "Rest"). */
@@ -12,7 +13,7 @@ export default function DayBlock({ day, onOpenSession, compact = false }) {
         {day.plannedDistanceKm > 0 && <span className="day-km">{day.plannedDistanceKm} km</span>}
       </header>
       {day.isRestDay || day.sessions.length === 0
-        ? <div className="rest">Rest day</div>
+        ? <div className="rest"><Icon name="bed" size={18} /> Rest day</div>
         : day.sessions.map((s) => <SessionRow key={s.id} session={s} onOpen={onOpenSession} />)}
       {!compact && day.notes?.planned && <p className="day-note">{day.notes.planned}</p>}
     </section>
