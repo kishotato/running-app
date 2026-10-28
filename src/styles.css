@@ -28,7 +28,9 @@
   --tap: 48px;              /* minimum tap target */
   --nav-h: 68px;
   /* The soft colour wash behind everything (gold, maroon, violet). Used by the page and the run detail sheet. */
-  --wash: radial-gradient(90% 55% at 30% 0%, var(--wash-1) 0%, transparent 70%),
+  /* The first layer fades the very top to --bg, the same colour as the phone's status bar (see lib/theme.js), so the two blend. */
+  --wash: linear-gradient(var(--bg) 0, transparent 120px),
+          radial-gradient(90% 55% at 30% 0%, var(--wash-1) 0%, transparent 70%),
           radial-gradient(70% 70% at 105% 30%, var(--wash-2) 0%, transparent 70%),
           radial-gradient(90% 55% at 0% 100%, var(--wash-3) 0%, transparent 70%);
   --glass: blur(18px) saturate(1.4);
