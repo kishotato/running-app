@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { KEYS, load, save } from './storage.js'
 
-const CHROME = { dark: '#130f0e', light: '#fbf7f1' } // colour of the phone's status bar area
+const CHROME = { dark: '#130f0e', light: '#f7f3ec' } // colour of the phone's status bar area
 
 export function getTheme() {
   const t = load(KEYS.theme, 'system')
