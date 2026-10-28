@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useStore } from '../store.jsx'
-import { todayISO } from '../lib/dates.js'
+import { PREVIEW_KEY, previewDate, todayISO } from '../lib/dates.js'
 import { downloadJSON, readJSONFile } from '../lib/storage.js'
 import { hrZones } from '../lib/zones.js'
 import Icon from '../components/Icon.jsx'
@@ -10,6 +10,11 @@ import { useTheme } from '../lib/theme.js'
 export default function Profile() {
   const { plan, profile, updateProfile } = useStore()
   const [theme, setTheme] = useTheme()
+  const [, rerender] = useState(0)
+  const setPreview = (value) => {
+    try { value ? localStorage.setItem(PREVIEW_KEY, value) : localStorage.removeItem(PREVIEW_KEY) } catch {}
+    rerender((n) => n + 1)
+  }
   const lthr = Number(profile.lthr)
   const zones = lthr > 0 ? hrZones(plan.zones, lthr, Number(profile.maxHr) || null) : []
 
@@ -44,6 +49,16 @@ export default function Profile() {
         <Segmented label="Theme" value={theme} onChange={setTheme}
           options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
         <p className="small muted">System follows your phone's light or dark setting.</p>
+      </div>
+
+      <h3 className="section-title">Preview</h3>
+      <div className="card flat">
+        <label className="field">
+          <span>Pretend today is…</span>
+          <input type="date" value={previewDate() || ''} onChange={(e) => setPreview(e.target.value)} />
+        </label>
+        <button type="button" className="btn" onClick={() => setPreview('')}>Back to real date</button>
+        <p className="small muted">See how This Week looks once the plan has started. Only changes what the app shows as "today".</p>
       </div>
 
       <h3 className="section-title">Zones &amp; paces</h3>

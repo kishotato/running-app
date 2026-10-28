@@ -216,7 +216,7 @@ strong { font-weight: 800; }
 }
 .done-btn.lg { width: 60px; height: 60px; }
 .done-btn:not(.done) { color: var(--border); }
-.done-btn.done { background: var(--done); border-color: var(--done); color: #fff; }
+.done-btn.done { background: var(--accent); border-color: var(--accent); color: var(--done); }
 
 .slot-icon { display: inline-flex; }
 .slot-icon.sun { color: var(--sun); }
@@ -224,14 +224,14 @@ strong { font-weight: 800; }
 .slot-icon.moon svg { fill: currentColor; }
 .rest { display: flex; align-items: center; gap: 8px; }
 .rest-title { display: flex; align-items: center; gap: 10px; }
-.sheet-head .done-btn { margin-left: auto; }
+.title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .label-row { display: flex; align-items: center; gap: 6px; }
 .help-btn {
   width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1.5px solid var(--muted);
   background: none; color: var(--muted); display: grid; place-items: center;
 }
-.feel-row { display: grid; grid-template-columns: repeat(5, 1fr); }
-.feel-row .chip { padding: 0 4px; }
+.feel-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.feel-row .chip { min-width: 0; min-height: 48px; padding: 0; font-size: 0.85rem; white-space: nowrap; }
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.55); padding: 20px;
   display: grid; place-items: center; animation: fade-in 0.15s ease-out;
@@ -352,7 +352,7 @@ strong { font-weight: 800; }
 .field { display: flex; flex-direction: column; gap: 6px; border: 0; padding: 0; margin: 0; min-width: 0; }
 .field > span, .field legend { font-size: 0.8rem; color: var(--muted); font-weight: 700; padding: 0; }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-input[type='text'], input[type='number'], textarea {
+input[type='text'], input[type='number'], input[type='date'], textarea {
   width: 100%; min-height: var(--tap); padding: 10px 12px; border-radius: var(--radius-sm);
   border: 1px solid var(--border); background: var(--surface-2); font-size: 1.05rem;
 }

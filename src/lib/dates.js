@@ -13,8 +13,14 @@ export function parseISO(iso) {
   return new Date(y, m - 1, d)
 }
 
+// Profile > Preview can pretend it is another day, to see how the app looks mid-plan.
+export const PREVIEW_KEY = 'runapp.previewDate.v1'
+export function previewDate() {
+  try { return localStorage.getItem(PREVIEW_KEY) || null } catch { return null }
+}
+
 export function todayISO() {
-  return toISO(new Date())
+  return previewDate() || toISO(new Date())
 }
 
 export function addDays(iso, n) {

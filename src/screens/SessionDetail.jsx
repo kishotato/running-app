@@ -31,7 +31,7 @@ const RPE_SCALE = [
 const rpeColor = (n) => `hsl(${Math.round(210 - ((n - 1) / 9) * 210)} 70% 58%)`
 
 export default function SessionDetail({ id, onClose }) {
-  const { plan, logs, toggleDone } = useStore()
+  const { plan } = useStore()
   const session = plan.sessions[id]
 
   // Lock the page behind the sheet so only the sheet scrolls.
@@ -45,7 +45,6 @@ export default function SessionDetail({ id, onClose }) {
       <header className="sheet-head">
         <button type="button" className="icon-btn" onClick={onClose} aria-label="Back"><Icon name="back" /></button>
         <span className="muted">{session ? formatDay(session.date, { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</span>
-        {session && <DoneButton done={!!logs[id]?.completed} onToggle={() => toggleDone(id)} />}
       </header>
       <div className="sheet-body">
         {!session
@@ -57,6 +56,17 @@ export default function SessionDetail({ id, onClose }) {
             </>
           )}
       </div>
+    </div>
+  )
+}
+
+/** Session title with the done tick at the right-hand end. */
+function TitleRow({ id, color, children }) {
+  const { logs, toggleDone } = useStore()
+  return (
+    <div className="title-row">
+      <h1 className="detail-title" style={{ '--accent-bar': color }}>{children}</h1>
+      <DoneButton done={!!logs[id]?.completed} onToggle={() => toggleDone(id)} />
     </div>
   )
 }
@@ -74,7 +84,7 @@ function RunInfo({ session }) {
   return (
     <>
       <p className="eyebrow">Week {week.weekNumber} · {week.phase}{session.slot ? ` · ${session.slot}` : ''}</p>
-      <h1 className="detail-title" style={{ '--accent-bar': zoneColor(session.zones) }}>{session.title}</h1>
+      <TitleRow id={session.id} color={zoneColor(session.zones)}>{session.title}</TitleRow>
 
       <div className="stat-grid">
         {session.distanceKm != null && <Stat label="Distance" value={`${session.distanceKm} km`} />}
@@ -132,7 +142,7 @@ function StrengthInfo({ session }) {
   return (
     <>
       <p className="eyebrow">Week {session.week.weekNumber}{session.slot ? ` · ${session.slot}` : ''}</p>
-      <h1 className="detail-title" style={{ '--accent-bar': 'var(--strength)' }}>{sessionLabel(session, plan.strength)}</h1>
+      <TitleRow id={session.id} color="var(--strength)">{sessionLabel(session, plan.strength)}</TitleRow>
       {lib ? (
         <>
           <div className="stat-grid">
