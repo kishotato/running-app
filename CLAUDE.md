@@ -53,6 +53,8 @@ Floating bottom nav bar with exactly four items: **This Week · Plan · Progress
 
 ## Design
 - Mobile-first, dark mode, large tap targets, clean and sporty.
+- Look: "Haze" paper style. Manrope font, a faint gold/maroon/violet colour wash over a paper tone, white buttons in dark mode and black in light mode, floating glass nav bar with a solid active tab. Light/dark/system is set in Profile > Appearance.
+- Boxed vs on the page: `.card`, `.stat` and `.detail-block` are boxed components. Add `flat` (e.g. `className="card flat"`) and the box disappears, leaving text on the page background with a thin divider. Remove `flat` to box it again. Run rows (`.session-row`) are always boxed. Currently everything except run rows is flat.
 
 ## Commands
 - `npm install` – install dependencies (once).

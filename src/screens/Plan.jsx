@@ -59,7 +59,7 @@ function WeekView({ idx, setIdx, onOpenSession }) {
       subtitle={`${formatRange(week.startDate, week.endDate)} · ${week.phase}${week.isDownWeek ? ' · Down week' : ''}`}
       onPrev={hasPrev ? () => setIdx(idx - 1) : null}
       onNext={hasNext ? () => setIdx(idx + 1) : null}>
-      <div className="card summary-card">
+      <div className="card flat summary-card">
         <div className="row-between">
           <span><strong>{stats.doneKm}</strong> / {stats.plannedKm} km</span>
           <span className="muted small">{stats.done}/{stats.sessions} done</span>
@@ -97,7 +97,7 @@ function MonthView({ month, setMonth, onOpenSession }) {
     <Swipeable title={formatMonth(month)}
       onPrev={hasPrev ? () => setMonth(addMonths(month, -1)) : null}
       onNext={hasNext ? () => setMonth(addMonths(month, 1)) : null}>
-      <div className="card summary-card">
+      <div className="card flat summary-card">
         <div className="row-between">
           <span><strong>{round1(doneKm)}</strong> / {round1(plannedKm)} km</span>
           <span className="muted small">{days.length ? 'this month' : 'nothing planned'}</span>

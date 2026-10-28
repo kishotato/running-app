@@ -18,7 +18,7 @@
   --card-shadow: none;
   --scrim: rgba(19, 15, 14, 0.6);
   --track: rgba(255, 255, 255, 0.16);
-  --nav-bg: rgba(255, 255, 255, 0.07);
+  --nav-bg: rgba(255, 255, 255, 0.04);
   --nav-border: rgba(255, 255, 255, 0.22);
   --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.35);
   --z1: #6fa8dc; --z2: #4cc38a; --z3: #f2c94c; --z4: #f2994a; --z5: #eb5757;
@@ -56,7 +56,7 @@
   --card-shadow: 0 1px 2px rgba(60, 40, 20, 0.05);
   --scrim: rgba(247, 243, 236, 0.85);
   --track: rgba(60, 40, 20, 0.1);
-  --nav-bg: rgba(255, 255, 255, 0.5);
+  --nav-bg: rgba(255, 255, 255, 0.38);
   --nav-border: rgba(255, 255, 255, 0.85);
   --nav-shadow: inset 0 1px 0 #fff, 0 12px 30px rgba(90, 60, 40, 0.14);
   --z1: #3f7fbf; --z2: #2e9e68; --z3: #c79a14; --z4: #d9731c; --z5: #d93d3d;
@@ -80,7 +80,7 @@
   --card-shadow: 0 1px 2px rgba(60, 40, 20, 0.05);
   --scrim: rgba(247, 243, 236, 0.85);
   --track: rgba(60, 40, 20, 0.1);
-  --nav-bg: rgba(255, 255, 255, 0.5);
+  --nav-bg: rgba(255, 255, 255, 0.38);
   --nav-border: rgba(255, 255, 255, 0.85);
   --nav-shadow: inset 0 1px 0 #fff, 0 12px 30px rgba(90, 60, 40, 0.14);
   --z1: #3f7fbf; --z2: #2e9e68; --z3: #c79a14; --z4: #d9731c; --z5: #d93d3d;
@@ -103,7 +103,7 @@
   --card-shadow: none;
   --scrim: rgba(19, 15, 14, 0.6);
   --track: rgba(255, 255, 255, 0.16);
-  --nav-bg: rgba(255, 255, 255, 0.07);
+  --nav-bg: rgba(255, 255, 255, 0.04);
   --nav-border: rgba(255, 255, 255, 0.22);
   --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.35);
   --z1: #6fa8dc; --z2: #4cc38a; --z3: #f2c94c; --z4: #f2994a; --z5: #eb5757;
@@ -381,6 +381,23 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
   .tiles { grid-template-columns: 1fr 1fr; }
   .hero-number { font-size: 3rem; }
 }
+
+/* ---------- Boxed vs on-the-page ----------
+   .card (and .stat, .detail-block) are boxed components.
+   Add "flat" next to it (className="card flat") and the box disappears: the text sits on the page
+   background, separated by a thin line. Remove "flat" to turn it back into a box.
+   Run rows (.session-row) are always boxed. */
+.card.flat, .stat.flat, .detail-block.flat {
+  background: none; border: 0; border-bottom: 1px solid var(--border); border-radius: 0; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none; padding: 4px 0 16px;
+}
+.stat.flat { border-bottom: 0; border-top: 1px solid var(--border); padding: 10px 0 4px; }
+.tile.flat { border-bottom: 0; padding: 4px 0; }
+.zone-card.flat { border-left: 3px solid var(--zc); padding: 2px 0 14px 12px; }
+.today-card.flat { padding: 4px 0 16px 14px; }
+.today-card.flat::before { width: 3px; }
+.data-tools.flat { border-bottom: 0; }
+.log-form.flat { border-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .sheet { animation: none; }

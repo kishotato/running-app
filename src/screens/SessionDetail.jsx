@@ -167,7 +167,7 @@ function LogForm({ session, onSaved }) {
   }
 
   return (
-    <form className="card log-form" onSubmit={submit}>
+    <form className="card flat log-form" onSubmit={submit}>
       <h3>Log</h3>
 
       <label className="toggle-row">
@@ -235,7 +235,7 @@ function stridesText(s) {
 
 function Stat({ label, value, sub, color }) {
   return (
-    <div className="stat" style={color ? { '--zc': color } : undefined}>
+    <div className="stat flat" style={color ? { '--zc': color } : undefined}>
       <span className="stat-label">{label}</span>
       <span className={`stat-value${color ? ' zoned' : ''}`}>{value}</span>
       {sub && <span className="stat-sub">{sub}</span>}
@@ -244,7 +244,7 @@ function Stat({ label, value, sub, color }) {
 }
 
 function Block({ title, children }) {
-  return <section className="detail-block"><h3>{title}</h3>{children}</section>
+  return <section className="detail-block flat"><h3>{title}</h3>{children}</section>
 }
 
 function Line({ items }) {

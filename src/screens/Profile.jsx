@@ -23,7 +23,7 @@ export default function Profile() {
         <h1>Profile</h1>
       </header>
 
-      <div className="card">
+      <div className="card flat">
         <div className="field-grid">
           <label className="field">
             <span>LTHR (bpm)</span>
@@ -40,7 +40,7 @@ export default function Profile() {
       </div>
 
       <h3 className="section-title">Appearance</h3>
-      <div className="card">
+      <div className="card flat">
         <Segmented label="Theme" value={theme} onChange={setTheme}
           options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
         <p className="small muted">System follows your phone's light or dark setting.</p>
@@ -49,7 +49,7 @@ export default function Profile() {
       <h3 className="section-title">Zones &amp; paces</h3>
       <div className="zone-list">
         {zones.map((z) => (
-          <div key={z.zone} className="card zone-card" style={{ '--zc': `var(--z${z.zone})` }}>
+          <div key={z.zone} className="card flat zone-card" style={{ '--zc': `var(--z${z.zone})` }}>
             <div className="zone-head">
               <span className="zone-badge">Z{z.zone}</span>
               <div>
@@ -103,7 +103,7 @@ function DataTools() {
   return (
     <>
       <h3 className="section-title">Data</h3>
-      <div className="card data-tools">
+      <div className="card flat data-tools">
         <p className="small muted">
           Plan: <strong>{plan.meta.name}</strong> · {plan.weeks.length} weeks loaded{isCustomPlan ? ' (imported)' : ' (built-in)'}
         </p>

@@ -31,7 +31,7 @@ export default function ThisWeek({ onOpenSession }) {
       </header>
 
       {beforeStart && (
-        <div className="card hero-card">
+        <div className="card flat hero-card">
           <p className="eyebrow">Plan starts {formatDay(plan.firstDate, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
           <div className="hero-number">{daysBetween(today, plan.firstDate)}<span> days to go</span></div>
           <p className="muted">Here's what week 1 looks like.</p>
@@ -39,7 +39,7 @@ export default function ThisWeek({ onOpenSession }) {
       )}
 
       {afterEnd && (
-        <div className="card hero-card">
+        <div className="card flat hero-card">
           <p className="eyebrow">End of loaded plan</p>
           <p className="muted">Import a plan with more weeks from Profile.</p>
         </div>
@@ -48,7 +48,7 @@ export default function ThisWeek({ onOpenSession }) {
       {todayDay && <TodayCard day={todayDay} onOpenSession={onOpenSession} />}
 
       {!afterEnd && (
-        <div className="card">
+        <div className="card flat">
           <div className="row-between">
             <h3>Week progress</h3>
             <span className="muted small">{stats.done} of {stats.sessions} sessions</span>
@@ -78,7 +78,7 @@ function TodayCard({ day, onOpenSession }) {
 
   if (day.isRestDay || day.sessions.length === 0) {
     return (
-      <div className="card today-card rest-card">
+      <div className="card flat today-card rest-card">
         <p className="eyebrow">Today</p>
         <div className="today-title">Rest day</div>
         <p className="muted">Recover well. {day.notes?.planned || ''}</p>
@@ -91,7 +91,7 @@ function TodayCard({ day, onOpenSession }) {
       {runs.map((run) => {
         const done = !!logs[run.id]?.completed
         return (
-          <div key={run.id} className={`card today-card${done ? ' is-done' : ''}`}
+          <div key={run.id} className={`card flat today-card${done ? ' is-done' : ''}`}
             style={{ '--accent-bar': zoneColor(run.zones) }}
             role="button" tabIndex={0} onClick={() => onOpenSession(run.id)}
             onKeyDown={(e) => { if (e.key === 'Enter') onOpenSession(run.id) }}>

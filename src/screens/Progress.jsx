@@ -32,7 +32,7 @@ export default function Progress() {
         {races.map((r) => {
           const days = daysBetween(today, r.date)
           return (
-            <div key={r.name} className={`card race-card prio-${r.priority}`}>
+            <div key={r.name} className={`card flat race-card prio-${r.priority}`}>
               <div className="race-left">
                 <span className="prio">{r.priority}</span>
                 <div>
@@ -54,16 +54,16 @@ export default function Progress() {
       </div>
 
       <div className="tiles">
-        <div className="card tile"><span className="stat-label">Km logged</span><strong>{round1(totalKm)}</strong></div>
-        <div className="card tile"><span className="stat-label">Runs done</span><strong>{runsDone}</strong></div>
-        <div className="card tile">
+        <div className="card flat tile"><span className="stat-label">Km logged</span><strong>{round1(totalKm)}</strong></div>
+        <div className="card flat tile"><span className="stat-label">Runs done</span><strong>{runsDone}</strong></div>
+        <div className="card flat tile">
           <span className="stat-label">Completion</span>
           <strong>{completion == null ? '—' : `${completion}%`}</strong>
           <span className="stat-sub">{due ? `${doneDue} of ${due} so far` : 'plan not started'}</span>
         </div>
       </div>
 
-      <div className="card">
+      <div className="card flat">
         <h3>Weekly km</h3>
         <WeeklyKmChart weeks={weeks} />
         <details className="table-toggle">
