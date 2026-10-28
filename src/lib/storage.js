@@ -5,6 +5,7 @@ export const KEYS = {
   logs: 'runapp.logs.v1', // { [sessionId]: log }
   profile: 'runapp.profile.v1', // { lthr, maxHr, paces }
   plan: 'runapp.plan.v1', // an imported plan that replaces the bundled one
+  theme: 'runapp.theme.v1', // 'system' | 'light' | 'dark'
 }
 
 export function load(key, fallback) {

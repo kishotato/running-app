@@ -3,7 +3,11 @@ import ReactDOM from 'react-dom/client'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.jsx'
 import { StoreProvider } from './store.jsx'
+import '@fontsource-variable/manrope'
 import './styles.css'
+import { applyTheme, getTheme } from './lib/theme.js'
+
+applyTheme(getTheme()) // before the first paint, so there is no flash of the wrong theme
 
 // Registers the service worker: the background script that caches the app
 // so it opens offline and picks up new versions after a deploy.

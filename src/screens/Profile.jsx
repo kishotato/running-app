@@ -4,9 +4,12 @@ import { todayISO } from '../lib/dates.js'
 import { downloadJSON, readJSONFile } from '../lib/storage.js'
 import { hrZones } from '../lib/zones.js'
 import Icon from '../components/Icon.jsx'
+import { Segmented } from '../components/ui.jsx'
+import { useTheme } from '../lib/theme.js'
 
 export default function Profile() {
   const { plan, profile, updateProfile } = useStore()
+  const [theme, setTheme] = useTheme()
   const lthr = Number(profile.lthr)
   const zones = lthr > 0 ? hrZones(plan.zones, lthr, Number(profile.maxHr) || null) : []
 
@@ -34,6 +37,13 @@ export default function Profile() {
           </label>
         </div>
         <p className="small muted">Zones update automatically from your LTHR.</p>
+      </div>
+
+      <h3 className="section-title">Appearance</h3>
+      <div className="card">
+        <Segmented label="Theme" value={theme} onChange={setTheme}
+          options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
+        <p className="small muted">System follows your phone's light or dark setting.</p>
       </div>
 
       <h3 className="section-title">Zones &amp; paces</h3>
