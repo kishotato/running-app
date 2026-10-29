@@ -230,8 +230,8 @@ strong { font-weight: 800; }
   width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1.5px solid var(--muted);
   background: none; color: var(--muted); display: grid; place-items: center;
 }
-.feel-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.feel-row .chip { min-width: 0; min-height: 48px; padding: 0; font-size: 0.85rem; white-space: nowrap; }
+.chip-row.feel-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.chip-row.feel-row .chip { min-width: 0; min-height: 48px; padding: 0; font-size: 0.85rem; white-space: nowrap; }
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.55); padding: 20px;
   display: grid; place-items: center; animation: fade-in 0.15s ease-out;
