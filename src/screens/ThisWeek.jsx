@@ -52,17 +52,14 @@ export default function ThisWeek({ onOpenSession }) {
             <span className="big-stat"><strong>{stats.doneKm}</strong><span> / {stats.plannedKm} km</span></span>
           </div>
           <ProgressBar value={stats.doneKm} max={stats.plannedKm} label="Kilometres completed this week" />
-          <p className="small muted">
-            {stats.done} of {stats.sessions} sessions · {week.phase}{week.isDownWeek ? ' · Down week' : ''}
-            {week.events?.length > 0 ? ' · ' + week.events.join(' · ') : ''}
-          </p>
+          {week.events?.length > 0 && <p className="small muted">{week.events.join(' · ')}</p>}
         </div>
       )}
 
       {upcoming.length > 0 && (
         <>
           <h3 className="section-title eyebrow">{beforeStart ? 'Week 1' : 'Coming up'}</h3>
-          {upcoming.map((d) => <DayBlock key={d.date} day={d} onOpenSession={onOpenSession} compact hideDone />)}
+          {upcoming.map((d) => <DayBlock key={d.date} day={d} onOpenSession={onOpenSession} compact hideDone flat />)}
         </>
       )}
     </>
@@ -79,13 +76,8 @@ function estimateMinutes(run) {
 }
 
 function TodayCard({ day, onOpenSession }) {
-  const { plan, logs, toggleDone } = useStore()
-  const zoneName = (zones) => {
-    if (!zones?.length) return null
-    const top = Math.max(...zones)
-    const name = plan.zones?.find?.((z) => z.zone === top)?.name
-    return zones.length === 1 && name ? `${name} · Zone ${top}` : `Zone ${zoneLabel(zones).slice(1)}`
-  }
+  const { logs, toggleDone } = useStore()
+  const zoneName = (zones) => (zones?.length ? `Zone ${zoneLabel(zones).slice(1)}` : null)
   const runs = runsOf(day)
   const others = day.sessions.filter((s) => s.type !== 'run')
 
@@ -117,13 +109,11 @@ function TodayCard({ day, onOpenSession }) {
                 <span className="zone-chip" style={{ '--zc': zoneColor(run.zones) }}>
                   <i className="zone-dot" />{zoneName(run.zones)}
                 </span>
-                <SlotIcon slot={run.slot} />
               </div>
             )}
-            <div className="today-title">{run.title}</div>
-            {run.distanceKm != null && <div className="hero-number">{Number(run.distanceKm).toFixed(1)}<span> km</span></div>}
+            <div className="today-title">{run.title}<SlotIcon slot={run.slot} /></div>
+            {run.distanceKm != null && <div className="hero-number">{Math.round(run.distanceKm)}<span> km</span></div>}
             {meta.length > 0 && <div className="today-meta">{meta.map((m, i) => <span key={i}>{m}</span>)}</div>}
-            {day.notes?.planned && <p className="day-note">{day.notes.planned}</p>}
             <div className="today-actions">
               <button type="button" className="btn primary" onClick={() => onOpenSession(run.id)}>View details</button>
               <DoneButton done={done} onToggle={() => toggleDone(run.id)} />
@@ -131,7 +121,7 @@ function TodayCard({ day, onOpenSession }) {
           </div>
         )
       })}
-      {others.map((s) => <SessionRow key={s.id} session={s} onOpen={onOpenSession} />)}
+      {others.map((s) => <SessionRow key={s.id} session={s} onOpen={onOpenSession} flat />)}
     </>
   )
 }
