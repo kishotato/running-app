@@ -93,7 +93,7 @@ function TodayCard({ day, onOpenSession }) {
 
   return (
     <>
-      {runs.map((run) => {
+      {runs.slice(0, 1).map((run) => {
         const done = !!logs[run.id]?.completed
         const mins = estimateMinutes(run)
         const meta = [
@@ -112,7 +112,7 @@ function TodayCard({ day, onOpenSession }) {
               </div>
             )}
             <div className="today-title">{run.title}<SlotIcon slot={run.slot} /></div>
-            {run.distanceKm != null && <div className="hero-number">{Math.round(run.distanceKm)}<span> km</span></div>}
+            {run.distanceKm != null && <div className="hero-number">{run.distanceKm < 10 ? Number(run.distanceKm).toFixed(1) : Math.round(run.distanceKm)}<span> km</span></div>}
             {meta.length > 0 && <div className="today-meta">{meta.map((m, i) => <span key={i}>{m}</span>)}</div>}
             <div className="today-actions">
               <button type="button" className="btn primary" onClick={() => onOpenSession(run.id)}>View details</button>
@@ -121,7 +121,7 @@ function TodayCard({ day, onOpenSession }) {
           </div>
         )
       })}
-      {others.map((s) => <SessionRow key={s.id} session={s} onOpen={onOpenSession} flat />)}
+      {[...runs.slice(1), ...others].map((s) => <SessionRow key={s.id} session={s} onOpen={onOpenSession} flat />)}
     </>
   )
 }

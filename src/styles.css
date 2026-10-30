@@ -307,6 +307,7 @@ strong { font-weight: 800; }
   box-shadow: var(--card-shadow); -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass);
 }
 .session-main { flex: 1; min-width: 0; }
+.session-icons { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .session-title { display: flex; align-items: center; gap: 6px; font-weight: 700; }
 .session-detail { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
 .slot { font-size: 0.7rem; font-weight: 800; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 1px 5px; }
@@ -469,3 +470,10 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
   .sheet { animation: none; }
   .swipe-body, .progress-fill, .done-btn { transition: none; }
 }
+
+/* Today's run: big distance like the mock-up; a dot between the details. */
+.today-card .hero-number { font-size: 5.5rem; }
+.today-card .hero-number span { font-size: 1.3rem; }
+.today-meta span + span::before { content: '·'; margin-right: 8px; }
+.today-meta { gap: 4px 8px; }
+@media (max-width: 360px) { .today-card .hero-number { font-size: 4.5rem; } }

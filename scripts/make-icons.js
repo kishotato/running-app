@@ -1,34 +1,46 @@
 // Generates the PNG app icons Android needs to make the app installable.
-// No image libraries: it draws the same "rising line" as public/icon.svg
+// No image libraries: it draws the same "pace lines" picture as public/icon.svg
 // pixel by pixel and writes a PNG using Node's built-in zlib.
 // Run with: npm run icons
 import { writeFileSync } from 'node:fs'
 import { deflateSync } from 'node:zlib'
 
-const BG = [0x0b, 0x0e, 0x13]
-const FG = [0xc6, 0xf4, 0x32]
-// Line points on a 512 grid, matching icon.svg.
-const POINTS = [[96, 368], [208, 208], [280, 288], [416, 136]]
-const STROKE = 22 // half the stroke width
+// Pastel palette.
+const BG = [0xfb, 0xe8, 0xd3]   // peach
+const BALL = [0x5c, 0x40, 0x33] // dark brown
+// "Pace lines": three streaks trailing a ball, on a 512 grid, matching icon.svg.
+const STREAKS = [
+  { from: [90, 200], to: [270, 200], colour: [0xa3, 0xd3, 0x9c] },  // pastel green
+  { from: [140, 262], to: [300, 262], colour: [0xf6, 0xa7, 0x7a] }, // pastel orange
+  { from: [100, 324], to: [250, 324], colour: [0xc8, 0xa2, 0x7f] }, // light brown
+]
+const HALF_STROKE = 18
+const BALL_C = [370, 262], BALL_R = 70
 
 function distToSegment(px, py, [ax, ay], [bx, by]) {
   const dx = bx - ax, dy = by - ay
   const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
   return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
 }
+function colourAt(px, py) {
+  if (Math.hypot(px - BALL_C[0], py - BALL_C[1]) <= BALL_R) return BALL
+  const streak = STREAKS.find((l) => distToSegment(px, py, l.from, l.to) <= HALF_STROKE)
+  return streak ? streak.colour : BG
+}
 
 function draw(size) {
   const scale = 512 / size
+  const N = 3 // 3x3 samples per pixel for smooth edges
   const rows = []
   for (let y = 0; y < size; y++) {
     const row = Buffer.alloc(1 + size * 3) // first byte = PNG filter type 0
     for (let x = 0; x < size; x++) {
-      const px = (x + 0.5) * scale, py = (y + 0.5) * scale
-      let d = Infinity
-      for (let i = 0; i < POINTS.length - 1; i++) d = Math.min(d, distToSegment(px, py, POINTS[i], POINTS[i + 1]))
-      // Soft edge for anti-aliasing.
-      const a = Math.max(0, Math.min(1, STROKE - d + 0.5))
-      for (let c = 0; c < 3; c++) row[1 + x * 3 + c] = Math.round(BG[c] + (FG[c] - BG[c]) * a)
+      const sum = [0, 0, 0]
+      for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
+        const c = colourAt((x + (i + 0.5) / N) * scale, (y + (j + 0.5) / N) * scale)
+        for (let k = 0; k < 3; k++) sum[k] += c[k]
+      }
+      for (let k = 0; k < 3; k++) row[1 + x * 3 + k] = Math.round(sum[k] / (N * N))
     }
     rows.push(row)
   }
