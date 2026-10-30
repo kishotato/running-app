@@ -259,18 +259,23 @@ strong { font-weight: 800; }
 .today-card::before, .session-row::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent-bar, var(--accent));
 }
-.today-title { font-size: 1.7rem; font-weight: 800; }
+.today-title { font-size: 1.5rem; font-weight: 700; margin-top: 4px; }
 .today-meta { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-weight: 600; }
-.today-actions { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.today-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.today-actions .btn { flex: 1; }
 .today-card.is-done .hero-number, .today-card.is-done .today-title { opacity: 0.6; }
 .rest-card { padding-left: 20px; }
 .big-stat { font-size: 1.8rem; font-variant-numeric: tabular-nums; }
 .big-stat span { color: var(--muted); font-size: 1.1rem; font-weight: 600; }
 .week-events { margin-top: 2px; }
 .zone-chip {
-  font-size: 0.8rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;
-  color: var(--zc); border: 1.5px solid var(--zc);
+  display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; padding: 6px 12px;
+  border-radius: 999px; color: var(--text); border: 1px solid var(--border); background: var(--surface);
 }
+.zone-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--zc); }
+.chip-line { display: flex; align-items: center; gap: 10px; }
+
+.week-progress .big-stat { font-size: 1.3rem; }
 
 /* ---------- Day + session rows ---------- */
 .day-block { display: flex; flex-direction: column; gap: 8px; }
@@ -441,8 +446,8 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 .stat.flat { border-bottom: 0; border-top: 1px solid var(--border); padding: 10px 0 4px; }
 .tile.flat { border-bottom: 0; padding: 4px 0; }
 .zone-card.flat { border-left: 3px solid var(--zc); padding: 2px 0 14px 12px; }
-.today-card.flat { padding: 4px 0 16px 14px; }
-.today-card.flat::before { width: 3px; }
+.today-card.flat { padding: 4px 0 16px; cursor: default; }
+.today-card.flat::before { content: none; }
 .data-tools.flat { border-bottom: 0; }
 .log-form.flat { border-bottom: 0; }
 

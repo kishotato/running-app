@@ -6,7 +6,7 @@ import { DoneButton, SlotIcon } from './ui.jsx'
 import Icon from './Icon.jsx'
 
 /** One run or strength session as a tappable row with a done tick. */
-export default function SessionRow({ session, onOpen }) {
+export default function SessionRow({ session, onOpen, hideDone = false }) {
   const { plan, logs, toggleDone } = useStore()
   const done = !!logs[session.id]?.completed
   const isRun = session.type === 'run'
@@ -27,7 +27,7 @@ export default function SessionRow({ session, onOpen }) {
         </div>
         {detail && <div className="session-detail">{detail}</div>}
       </div>
-      <DoneButton done={done} onToggle={() => toggleDone(session.id)} />
+      {!hideDone && <DoneButton done={done} onToggle={() => toggleDone(session.id)} />}
     </div>
   )
 }

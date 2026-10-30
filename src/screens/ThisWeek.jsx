@@ -1,13 +1,13 @@
 import { useStore } from '../store.jsx'
-import { daysBetween, formatDay, formatRange, todayISO } from '../lib/dates.js'
+import { daysBetween, formatDay, todayISO } from '../lib/dates.js'
 import { runsOf, weekIndexFor } from '../lib/plan.js'
-import { paceRange } from '../lib/pace.js'
+import { parseDuration, paceRange } from '../lib/pace.js'
 import { weekStats } from '../lib/stats.js'
 import { zoneColor, zoneLabel } from '../lib/zones.js'
 import Icon from '../components/Icon.jsx'
 import DayBlock from '../components/DayBlock.jsx'
 import SessionRow from '../components/SessionRow.jsx'
-import { DoneButton, ProgressBar } from '../components/ui.jsx'
+import { DoneButton, ProgressBar, SlotIcon } from '../components/ui.jsx'
 
 export default function ThisWeek({ onOpenSession }) {
   const { plan, logs } = useStore()
@@ -24,11 +24,8 @@ export default function ThisWeek({ onOpenSession }) {
   return (
     <>
       <header className="page-head">
-        <p className="eyebrow">{formatDay(today, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
-        <h1>This Week</h1>
-        <p className="muted">
-          Week {week.weekNumber} · {week.phase}{week.isDownWeek ? ' · Down week' : ''} · {formatRange(week.startDate, week.endDate)}
-        </p>
+        <p className="eyebrow">Week {week.weekNumber} · {formatDay(today, { weekday: 'short', day: 'numeric', month: 'short' })}</p>
+        <h1>Today</h1>
       </header>
 
       {beforeStart && (
@@ -49,31 +46,46 @@ export default function ThisWeek({ onOpenSession }) {
       {todayDay && <TodayCard day={todayDay} onOpenSession={onOpenSession} />}
 
       {!afterEnd && (
-        <div className="card flat">
+        <div className="card flat week-progress">
           <div className="row-between">
-            <h3>Week progress</h3>
-            <span className="muted small">{stats.done} of {stats.sessions} sessions</span>
-          </div>
-          <div className="big-stat">
-            <strong>{stats.doneKm}</strong><span> / {stats.plannedKm} km</span>
+            <span className="muted">This week</span>
+            <span className="big-stat"><strong>{stats.doneKm}</strong><span> / {stats.plannedKm} km</span></span>
           </div>
           <ProgressBar value={stats.doneKm} max={stats.plannedKm} label="Kilometres completed this week" />
-          {week.events?.length > 0 && <p className="small muted week-events">{week.events.join(' · ')}</p>}
+          <p className="small muted">
+            {stats.done} of {stats.sessions} sessions · {week.phase}{week.isDownWeek ? ' · Down week' : ''}
+            {week.events?.length > 0 ? ' · ' + week.events.join(' · ') : ''}
+          </p>
         </div>
       )}
 
       {upcoming.length > 0 && (
         <>
-          <h3 className="section-title">{beforeStart ? 'Week 1' : 'Coming up'}</h3>
-          {upcoming.map((d) => <DayBlock key={d.date} day={d} onOpenSession={onOpenSession} compact />)}
+          <h3 className="section-title eyebrow">{beforeStart ? 'Week 1' : 'Coming up'}</h3>
+          {upcoming.map((d) => <DayBlock key={d.date} day={d} onOpenSession={onOpenSession} compact hideDone />)}
         </>
       )}
     </>
   )
 }
 
+/** Rough duration for a plain steady run: distance x the middle of the pace range. */
+function estimateMinutes(run) {
+  const { main, distanceKm } = run
+  if (!distanceKm || !main?.pace?.fast || !main?.pace?.slow) return null
+  if (main.intervals || main.strides || main.target) return null
+  const mid = (parseDuration(main.pace.fast) + parseDuration(main.pace.slow)) / 2
+  return Math.round((mid * distanceKm) / 60)
+}
+
 function TodayCard({ day, onOpenSession }) {
-  const { logs, toggleDone } = useStore()
+  const { plan, logs, toggleDone } = useStore()
+  const zoneName = (zones) => {
+    if (!zones?.length) return null
+    const top = Math.max(...zones)
+    const name = plan.zones?.find?.((z) => z.zone === top)?.name
+    return zones.length === 1 && name ? `${name} · Zone ${top}` : `Zone ${zoneLabel(zones).slice(1)}`
+  }
   const runs = runsOf(day)
   const others = day.sessions.filter((s) => s.type !== 'run')
 
@@ -91,26 +103,30 @@ function TodayCard({ day, onOpenSession }) {
     <>
       {runs.map((run) => {
         const done = !!logs[run.id]?.completed
+        const mins = estimateMinutes(run)
+        const meta = [
+          run.main?.intervals?.label,
+          paceRange(run.main?.pace),
+          run.main?.target?.description,
+          mins && `about ${mins} min`,
+        ].filter(Boolean)
         return (
-          <div key={run.id} className={`card flat today-card${done ? ' is-done' : ''}`}
-            style={{ '--accent-bar': zoneColor(run.zones) }}
-            role="button" tabIndex={0} onClick={() => onOpenSession(run.id)}
-            onKeyDown={(e) => { if (e.key === 'Enter') onOpenSession(run.id) }}>
-            <div className="row-between">
-              <p className="eyebrow">Today{run.slot ? ` · ${run.slot}` : ''}</p>
-              {run.zones?.length > 0 && <span className="zone-chip" style={{ '--zc': zoneColor(run.zones) }}>{zoneLabel(run.zones)}</span>}
-            </div>
+          <div key={run.id} className={`card flat today-card${done ? ' is-done' : ''}`}>
+            {run.zones?.length > 0 && (
+              <div className="chip-line">
+                <span className="zone-chip" style={{ '--zc': zoneColor(run.zones) }}>
+                  <i className="zone-dot" />{zoneName(run.zones)}
+                </span>
+                <SlotIcon slot={run.slot} />
+              </div>
+            )}
             <div className="today-title">{run.title}</div>
-            {run.distanceKm != null && <div className="hero-number">{run.distanceKm}<span> km</span></div>}
-            <div className="today-meta">
-              {run.main?.intervals?.label && <span>{run.main.intervals.label}</span>}
-              {paceRange(run.main?.pace) && <span>{paceRange(run.main.pace)}</span>}
-              {run.main?.target?.description && <span>{run.main.target.description}</span>}
-            </div>
+            {run.distanceKm != null && <div className="hero-number">{Number(run.distanceKm).toFixed(1)}<span> km</span></div>}
+            {meta.length > 0 && <div className="today-meta">{meta.map((m, i) => <span key={i}>{m}</span>)}</div>}
             {day.notes?.planned && <p className="day-note">{day.notes.planned}</p>}
             <div className="today-actions">
-              <DoneButton done={done} onToggle={() => toggleDone(run.id)} size="lg" />
-              <span className="muted">{done ? 'Done — tap card to log details' : 'Tap to see details & log'}</span>
+              <button type="button" className="btn primary" onClick={() => onOpenSession(run.id)}>View details</button>
+              <DoneButton done={done} onToggle={() => toggleDone(run.id)} />
             </div>
           </div>
         )

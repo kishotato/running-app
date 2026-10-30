@@ -4,7 +4,7 @@ const ITEMS = [
   { id: 'profile', label: 'Profile' },
   { id: 'plan', label: 'Plan' },
   { id: 'progress', label: 'Progress' },
-  { id: 'week', label: 'This Week' },
+  { id: 'week', label: 'Home' },
 ]
 
 export default function BottomNav({ tab, onChange }) {
