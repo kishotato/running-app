@@ -1,10 +1,10 @@
 import Icon from './Icon.jsx'
 
 const ITEMS = [
-  { id: 'profile', label: 'Profile' },
-  { id: 'plan', label: 'Plan' },
-  { id: 'progress', label: 'Progress' },
   { id: 'week', label: 'Home' },
+  { id: 'progress', label: 'Progress' },
+  { id: 'plan', label: 'Plan' },
+  { id: 'profile', label: 'Profile' },
 ]
 
 export default function BottomNav({ tab, onChange }) {

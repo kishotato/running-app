@@ -1,25 +1,47 @@
 import { useRef, useState } from 'react'
 import { useStore } from '../store.jsx'
-import { PREVIEW_KEY, previewDate, todayISO } from '../lib/dates.js'
+import { PREVIEW_KEY, formatDay, previewDate, todayISO } from '../lib/dates.js'
 import { downloadJSON, readJSONFile } from '../lib/storage.js'
 import { hrZones } from '../lib/zones.js'
 import Icon from '../components/Icon.jsx'
 import { Segmented } from '../components/ui.jsx'
 import { useTheme } from '../lib/theme.js'
 
-export default function Profile() {
-  const { plan, profile, updateProfile } = useStore()
-  const [theme, setTheme] = useTheme()
-  const [, rerender] = useState(0)
-  const setPreview = (value) => {
-    try { value ? localStorage.setItem(PREVIEW_KEY, value) : localStorage.removeItem(PREVIEW_KEY) } catch {}
-    rerender((n) => n + 1)
-  }
-  const lthr = Number(profile.lthr)
-  const zones = lthr > 0 ? hrZones(plan.zones, lthr, Number(profile.maxHr) || null) : []
+const THEME_LABELS = { system: 'System', light: 'Light', dark: 'Dark' }
 
-  const setPace = (zone, end, value) => {
-    updateProfile({ paces: { ...profile.paces, [zone]: { ...profile.paces?.[zone], [end]: value || null } } })
+/** Profile is a settings menu: a list of sections, each opening its own page (#/profile/<id>). */
+export default function Profile({ section }) {
+  const { plan, profile, isCustomPlan } = useStore()
+  const [theme, setTheme] = useTheme()
+  const openedHere = useRef(false) // did we push the section page ourselves?
+
+  const open = (id) => { openedHere.current = true; window.location.hash = `/profile/${id}` }
+  const back = () => {
+    // Same as the phone's back button when we opened it; otherwise just go to the menu.
+    if (openedHere.current) { openedHere.current = false; window.history.back() }
+    else window.location.replace('#/profile')
+  }
+
+  const SECTIONS = {
+    heart: { title: 'Heart rate', icon: 'heart', value: profile.lthr ? `LTHR ${profile.lthr} bpm` : 'Not set', page: <HeartRate /> },
+    zones: { title: 'Zones & paces', icon: 'zones', value: `${plan.zones.length} zones`, page: <ZonesPaces /> },
+    appearance: { title: 'Appearance', icon: 'moon', value: THEME_LABELS[theme], page: <Appearance theme={theme} setTheme={setTheme} /> },
+    preview: { title: 'Preview date', icon: 'eye', value: previewDate() ? formatDay(previewDate()) : 'Off', page: <Preview /> },
+    data: { title: 'Data & backup', icon: 'download', value: isCustomPlan ? 'Imported plan' : 'Built-in plan', page: <DataTools /> },
+  }
+  const GROUPS = [['Training', ['heart', 'zones']], ['App', ['appearance', 'preview']], ['Data', ['data']]]
+
+  const current = SECTIONS[section]
+  if (current) {
+    return (
+      <div key={section} className="settings-page">
+        <header className="settings-head">
+          <button type="button" className="icon-btn" onClick={back} aria-label="Back to Profile"><Icon name="back" /></button>
+          <h1>{current.title}</h1>
+        </header>
+        {current.page}
+      </div>
+    )
   }
 
   return (
@@ -27,72 +49,113 @@ export default function Profile() {
       <header className="page-head">
         <h1>Profile</h1>
       </header>
-
-      <div className="card flat">
-        <div className="field-grid">
-          <label className="field">
-            <span>LTHR (bpm)</span>
-            <input type="number" inputMode="numeric" value={profile.lthr ?? ''}
-              onChange={(e) => updateProfile({ lthr: e.target.value })} />
-          </label>
-          <label className="field">
-            <span>Max HR (bpm)</span>
-            <input type="number" inputMode="numeric" value={profile.maxHr ?? ''}
-              onChange={(e) => updateProfile({ maxHr: e.target.value })} />
-          </label>
-        </div>
-        <p className="small muted">Zones update automatically from your LTHR.</p>
-      </div>
-
-      <h3 className="section-title">Appearance</h3>
-      <div className="card flat">
-        <Segmented label="Theme" value={theme} onChange={setTheme}
-          options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
-        <p className="small muted">System follows your phone's light or dark setting.</p>
-      </div>
-
-      <h3 className="section-title">Preview</h3>
-      <div className="card flat">
-        <label className="field">
-          <span>Pretend today is…</span>
-          <input type="date" value={previewDate() || ''} onChange={(e) => setPreview(e.target.value)} />
-        </label>
-        <button type="button" className="btn" onClick={() => setPreview('')}>Back to real date</button>
-        <p className="small muted">See how This Week looks once the plan has started. Only changes what the app shows as "today".</p>
-      </div>
-
-      <h3 className="section-title">Zones &amp; paces</h3>
-      <div className="zone-list">
-        {zones.map((z) => (
-          <div key={z.zone} className="card flat zone-card" style={{ '--zc': `var(--z${z.zone})` }}>
-            <div className="zone-head">
-              <span className="zone-badge">Z{z.zone}</span>
-              <div>
-                <div className="zone-name">{z.name}</div>
-                <div className="muted small">{z.pct.min}–{z.pct.max}% LTHR</div>
-              </div>
-              <div className="zone-hr"><strong>{z.min}–{z.max}</strong><span>bpm</span></div>
-            </div>
-            <div className="pace-inputs">
-              <label>
-                <span>Fast</span>
-                <input type="text" inputMode="numeric" placeholder="m:ss" value={profile.paces?.[z.zone]?.fast ?? ''}
-                  onChange={(e) => setPace(z.zone, 'fast', e.target.value)} />
-              </label>
-              <span className="muted">–</span>
-              <label>
-                <span>Slow</span>
-                <input type="text" inputMode="numeric" placeholder="m:ss" value={profile.paces?.[z.zone]?.slow ?? ''}
-                  onChange={(e) => setPace(z.zone, 'slow', e.target.value)} />
-              </label>
-              <span className="muted small">/km</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <DataTools />
+      {GROUPS.map(([group, ids]) => (
+        <section key={group} className="settings-group">
+          <h3 className="eyebrow">{group}</h3>
+          {ids.map((id) => {
+            const s = SECTIONS[id]
+            return (
+              <button key={id} type="button" className="settings-row" onClick={() => open(id)}>
+                <span className="settings-icon"><Icon name={s.icon} size={18} /></span>
+                <span className="settings-label">{s.title}</span>
+                <span className="settings-value">{s.value}</span>
+                <Icon name="right" size={18} />
+              </button>
+            )
+          })}
+        </section>
+      ))}
     </>
+  )
+}
+
+function HeartRate() {
+  const { profile, updateProfile } = useStore()
+  return (
+    <div className="card flat">
+      <div className="field-grid">
+        <label className="field">
+          <span>LTHR (bpm)</span>
+          <input type="number" inputMode="numeric" value={profile.lthr ?? ''}
+            onChange={(e) => updateProfile({ lthr: e.target.value })} />
+        </label>
+        <label className="field">
+          <span>Max HR (bpm)</span>
+          <input type="number" inputMode="numeric" value={profile.maxHr ?? ''}
+            onChange={(e) => updateProfile({ maxHr: e.target.value })} />
+        </label>
+      </div>
+      <p className="small muted">Zones update automatically from your LTHR.</p>
+    </div>
+  )
+}
+
+function ZonesPaces() {
+  const { plan, profile, updateProfile } = useStore()
+  const lthr = Number(profile.lthr)
+  const zones = lthr > 0 ? hrZones(plan.zones, lthr, Number(profile.maxHr) || null) : []
+  const setPace = (zone, end, value) => {
+    updateProfile({ paces: { ...profile.paces, [zone]: { ...profile.paces?.[zone], [end]: value || null } } })
+  }
+
+  if (!zones.length) return <p className="empty">Set your LTHR under Heart rate to see your zones.</p>
+  return (
+    <div className="zone-list">
+      {zones.map((z) => (
+        <div key={z.zone} className="card flat zone-card" style={{ '--zc': `var(--z${z.zone})` }}>
+          <div className="zone-head">
+            <span className="zone-badge">Z{z.zone}</span>
+            <div>
+              <div className="zone-name">{z.name}</div>
+              <div className="muted small">{z.pct.min}–{z.pct.max}% LTHR</div>
+            </div>
+            <div className="zone-hr"><strong>{z.min}–{z.max}</strong><span>bpm</span></div>
+          </div>
+          <div className="pace-inputs">
+            <label>
+              <span>Fast</span>
+              <input type="text" inputMode="numeric" placeholder="m:ss" value={profile.paces?.[z.zone]?.fast ?? ''}
+                onChange={(e) => setPace(z.zone, 'fast', e.target.value)} />
+            </label>
+            <span className="muted">–</span>
+            <label>
+              <span>Slow</span>
+              <input type="text" inputMode="numeric" placeholder="m:ss" value={profile.paces?.[z.zone]?.slow ?? ''}
+                onChange={(e) => setPace(z.zone, 'slow', e.target.value)} />
+            </label>
+            <span className="muted small">/km</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Appearance({ theme, setTheme }) {
+  return (
+    <div className="card flat">
+      <Segmented label="Theme" value={theme} onChange={setTheme}
+        options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
+      <p className="small muted">System follows your phone's light or dark setting.</p>
+    </div>
+  )
+}
+
+function Preview() {
+  const [, rerender] = useState(0)
+  const setPreview = (value) => {
+    try { value ? localStorage.setItem(PREVIEW_KEY, value) : localStorage.removeItem(PREVIEW_KEY) } catch {}
+    rerender((n) => n + 1)
+  }
+  return (
+    <div className="card flat">
+      <label className="field">
+        <span>Pretend today is…</span>
+        <input type="date" value={previewDate() || ''} onChange={(e) => setPreview(e.target.value)} />
+      </label>
+      <button type="button" className="btn" onClick={() => setPreview('')}>Back to real date</button>
+      <p className="small muted">See how Home looks on another day of the plan. Only changes what the app shows as "today".</p>
+    </div>
   )
 }
 
@@ -117,7 +180,6 @@ function DataTools() {
 
   return (
     <>
-      <h3 className="section-title">Data</h3>
       <div className="card flat data-tools">
         <p className="small muted">
           Plan: <strong>{plan.meta.name}</strong> · {plan.weeks.length} weeks loaded{isCustomPlan ? ' (imported)' : ' (built-in)'}

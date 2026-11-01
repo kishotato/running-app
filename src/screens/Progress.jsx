@@ -1,24 +1,22 @@
 import { useState } from 'react'
 import { useStore } from '../store.jsx'
-import { daysBetween, formatDay, todayISO } from '../lib/dates.js'
-import { loggedKm, round1, weekStats } from '../lib/stats.js'
+import { addDays, daysBetween, formatDay, formatRange, startOfWeek, todayISO } from '../lib/dates.js'
+import { periodStats, round1 } from '../lib/stats.js'
 import Icon from '../components/Icon.jsx'
+import LineChart from '../components/LineChart.jsx'
+import SessionRow from '../components/SessionRow.jsx'
 
-export default function Progress() {
-  const { plan, logs } = useStore()
+// How far back the weekly chart looks. "plan" = from the first plan week.
+const RANGES = [
+  { value: '4', label: 'Last month' },
+  { value: '13', label: 'Last 3 months' },
+  { value: '26', label: 'Last 6 months' },
+  { value: 'plan', label: 'Whole plan' },
+]
+
+export default function Progress({ onOpenSession }) {
+  const { plan } = useStore()
   const today = todayISO()
-
-  // Completion only counts sessions up to today, so future runs don't drag it down.
-  let due = 0, doneDue = 0, totalKm = 0, runsDone = 0
-  for (const s of Object.values(plan.sessions)) {
-    const log = logs[s.id]
-    if (s.date <= today) { due++; if (log?.completed) doneDue++ }
-    if (log?.completed && s.type === 'run') runsDone++
-    totalKm += loggedKm(s, log)
-  }
-  const completion = due ? Math.round((doneDue / due) * 100) : null
-
-  const weeks = plan.weeks.map((w) => ({ week: w, ...weekStats(w, logs) }))
   const races = [...(plan.meta.races || [])].sort((a, b) => a.date.localeCompare(b.date))
 
   return (
@@ -53,85 +51,150 @@ export default function Progress() {
         })}
       </div>
 
-      <div className="tiles">
-        <div className="card flat tile"><span className="stat-label">Km logged</span><strong>{round1(totalKm)}</strong></div>
-        <div className="card flat tile"><span className="stat-label">Runs done</span><strong>{runsDone}</strong></div>
-        <div className="card flat tile">
-          <span className="stat-label">Completion</span>
-          <strong>{completion == null ? '—' : `${completion}%`}</strong>
-          <span className="stat-sub">{due ? `${doneDue} of ${due} so far` : 'plan not started'}</span>
-        </div>
-      </div>
-
-      <div className="card flat">
-        <h3>Weekly km</h3>
-        <WeeklyKmChart weeks={weeks} />
-        <details className="table-toggle">
-          <summary>Show as table</summary>
-          <table className="data-table">
-            <thead><tr><th>Week</th><th>Planned</th><th>Done</th><th>Sessions</th></tr></thead>
-            <tbody>
-              {weeks.map((w) => (
-                <tr key={w.week.weekNumber}>
-                  <td>{w.week.weekNumber}</td><td>{w.plannedKm}</td><td>{w.doneKm}</td><td>{w.done}/{w.sessions}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </details>
-      </div>
+      <WeeklySection />
+      <PlanToDate onOpenSession={onOpenSession} />
     </>
   )
 }
 
-/** Bars per week: grey outline = planned km, filled accent = km done. Tap a week for its numbers. */
-function WeeklyKmChart({ weeks }) {
-  const today = todayISO()
-  const current = weeks.findIndex((w) => today >= w.week.startDate && today <= w.week.endDate)
-  const [active, setActive] = useState(current >= 0 ? current : 0)
+/** "1h 05m" style; "0m" when nothing was logged. */
+function formatTime(sec) {
+  const m = Math.round(sec / 60)
+  const h = Math.floor(m / 60)
+  return h ? `${h}h ${String(m % 60).padStart(2, '0')}m` : `${m}m`
+}
 
-  const H = 160, PAD_TOP = 8, PAD_BOTTOM = 22, LEFT = 30
-  const slot = 36, barW = 22
-  const W = LEFT + weeks.length * slot
-  const maxKm = Math.max(10, ...weeks.map((w) => Math.max(w.plannedKm, w.doneKm)))
-  const niceMax = Math.ceil(maxKm / 20) * 20
-  const y = (km) => PAD_TOP + (H - PAD_TOP - PAD_BOTTOM) * (1 - km / niceMax)
-  const ticks = [0, niceMax / 2, niceMax]
+/** Weekly distance over the chosen range, Strava-style: tap or drag along the line to pick a week. */
+function WeeklySection() {
+  const { plan, logs } = useStore()
+  const today = todayISO()
+  const [range, setRange] = useState('13')
+
+  // Monday-start weeks, ending with the current one.
+  const thisWeek = startOfWeek(today)
+  const count = range === 'plan'
+    ? Math.max(1, Math.floor(daysBetween(startOfWeek(plan.firstDate), thisWeek) / 7) + 1)
+    : Number(range)
+  const weeks = Array.from({ length: count }, (_, i) => {
+    const start = addDays(thisWeek, -7 * (count - 1 - i))
+    const end = addDays(start, 6)
+    return { start, end, ...periodStats(plan, logs, start, end) }
+  })
+
+  const [picked, setPicked] = useState(null)
+  const active = picked != null && picked < weeks.length ? picked : weeks.length - 1
   const sel = weeks[active]
 
   return (
-    <div className="chart">
-      <div className="chart-legend">
-        <span><i className="key planned" /> Planned</span>
-        <span><i className="key done" /> Done</span>
+    <section className="card flat progress-section">
+      <div className="row-between">
+        <h3>Weekly distance</h3>
+        <label className="select-pill">
+          <span className="sr-only">Time range</span>
+          <select value={range} onChange={(e) => { setRange(e.target.value); setPicked(null) }}>
+            {RANGES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+          </select>
+          <Icon name="down" size={16} />
+        </label>
       </div>
-      {sel && (
-        <p className="chart-readout">
-          Week {sel.week.weekNumber}: <strong>{sel.doneKm}</strong> of {sel.plannedKm} km · {sel.done}/{sel.sessions} sessions
-        </p>
-      )}
-      <div className="chart-scroll">
-        <svg width={W} height={H} role="img" aria-label="Weekly kilometres, planned versus done">
-          {ticks.map((t) => (
-            <g key={t}>
-              <line x1={LEFT} x2={W} y1={y(t)} y2={y(t)} className="grid" />
-              <text x={LEFT - 6} y={y(t) + 4} className="axis" textAnchor="end">{t}</text>
-            </g>
-          ))}
-          {weeks.map((w, i) => {
-            const x = LEFT + i * slot + (slot - barW) / 2
-            return (
-              <g key={w.week.weekNumber} onClick={() => setActive(i)} className={`bar-group${i === active ? ' active' : ''}`}>
-                {/* Invisible tall hit area so the whole column is tappable. */}
-                <rect x={LEFT + i * slot} y={0} width={slot} height={H} fill="transparent" />
-                <rect x={x} y={y(w.plannedKm)} width={barW} height={Math.max(0, y(0) - y(w.plannedKm))} rx={4} className="bar-planned" />
-                {w.doneKm > 0 && <rect x={x + 3} y={y(w.doneKm)} width={barW - 6} height={y(0) - y(w.doneKm)} rx={3} className="bar-done" />}
-                <text x={x + barW / 2} y={H - 6} textAnchor="middle" className={`axis${i === current ? ' current' : ''}`}>{w.week.weekNumber}</text>
-              </g>
-            )
-          })}
-        </svg>
+
+      <p className="period-title">{formatRange(sel.start, sel.end)} {sel.end.slice(0, 4)}</p>
+      <div className="period-stats">
+        <div><span className="stat-label">Distance</span><strong>{round1(sel.km)} km</strong></div>
+        <div><span className="stat-label">Time</span><strong>{formatTime(sel.sec)}</strong></div>
+        <div><span className="stat-label">Sessions</span><strong>{sel.done}<span className="muted"> / {sel.sessions}</span></strong></div>
       </div>
-    </div>
+
+      <LineChart
+        points={weeks.map((w) => ({ date: w.start, value: round1(w.km) }))}
+        active={active} onSelect={setPicked}
+        label="Kilometres run each week" />
+
+      <details className="table-toggle">
+        <summary>Show as table</summary>
+        <table className="data-table">
+          <thead><tr><th>Week of</th><th>Km</th><th>Time</th><th>Sessions</th></tr></thead>
+          <tbody>
+            {weeks.map((w) => (
+              <tr key={w.start}>
+                <td>{formatDay(w.start, { day: 'numeric', month: 'short' })}</td>
+                <td>{round1(w.km)}</td><td>{formatTime(w.sec)}</td><td>{w.done}/{w.sessions}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </details>
+    </section>
+  )
+}
+
+/** Totals from the first day of the plan up to today, plus a running total of km against the plan. */
+function PlanToDate({ onOpenSession }) {
+  const { plan, logs } = useStore()
+  const today = todayISO()
+  const started = today >= plan.firstDate
+  const end = today < plan.lastDate ? today : plan.lastDate
+  const totals = started ? periodStats(plan, logs, plan.firstDate, end) : null
+
+  // Missed = before today and not ticked. Today's sessions still have time.
+  const missed = Object.values(plan.sessions)
+    .filter((s) => s.date < today && !logs[s.id]?.completed)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
+
+  // Running totals, one point per plan week up to the current one.
+  let doneSum = 0, plannedSum = 0
+  const points = plan.weeks.filter((w) => w.startDate <= end).map((w) => {
+    const s = periodStats(plan, logs, w.startDate, w.endDate < end ? w.endDate : end)
+    doneSum += s.km
+    plannedSum += s.plannedKm
+    return { date: w.startDate, value: round1(doneSum), compare: round1(plannedSum), week: w.weekNumber }
+  })
+  const [picked, setPicked] = useState(null)
+  const active = picked != null && picked < points.length ? picked : points.length - 1
+  const sel = points[active]
+
+  return (
+    <section className="card flat progress-section">
+      <h3>Plan to date</h3>
+      {!started
+        ? <p className="muted">The plan starts {formatDay(plan.firstDate, { weekday: 'long', day: 'numeric', month: 'long' })}. Totals appear from then.</p>
+        : (
+          <>
+            <div className="period-stats four">
+              <div><span className="stat-label">Total km</span><strong>{round1(totals.km)}</strong></div>
+              <div><span className="stat-label">Runs</span><strong>{totals.runsDone}</strong></div>
+              <div>
+                <span className="stat-label">Completed</span>
+                <strong>{totals.sessions ? Math.round((totals.done / totals.sessions) * 100) : 0}%</strong>
+              </div>
+              <div><span className="stat-label">Missed</span><strong>{missed.length}</strong></div>
+            </div>
+
+            <div className="chart-legend">
+              <span><i className="key line" /> Done</span>
+              <span><i className="key dashed" /> Planned</span>
+            </div>
+            {sel && (
+              <p className="chart-readout">
+                By week {sel.week}: <strong>{sel.value} km</strong> <span className="muted">of {sel.compare} km planned</span>
+              </p>
+            )}
+            <LineChart points={points} active={active} onSelect={setPicked}
+              label="Running total of kilometres since the plan started, done versus planned" />
+
+            {missed.length > 0 && (
+              <details className="table-toggle missed">
+                <summary>Show missed sessions ({missed.length})</summary>
+                {missed.map((s) => (
+                  <div key={s.id} className="missed-item">
+                    <span className="eyebrow">{formatDay(s.date)}</span>
+                    <SessionRow session={s} onOpen={onOpenSession} flat />
+                  </div>
+                ))}
+              </details>
+            )}
+          </>
+        )}
+    </section>
   )
 }

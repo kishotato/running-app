@@ -25,6 +25,10 @@
   --nav-border: rgba(255, 255, 255, 0.22);
   --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.35);
   --z1: #6fa8dc; --z2: #4cc38a; --z3: #f2c94c; --z4: #f2994a; --z5: #eb5757;
+  --chart: #ff7a3d;
+  /* Training phase colours for the calendar, picked from words in the phase name (see Plan.jsx). */
+  --ph-base: #5fb3b3; --ph-build: #e0b04a; --ph-peak: #b07fd6; --ph-taper: #6f9fe0;
+  --ph-race: #e57f7f; --ph-recovery: #8fc46a; --ph-other: #a39486;
   color-scheme: dark;
   --radius: 16px;
   --radius-sm: 12px;
@@ -66,6 +70,7 @@
   --nav-border: rgba(255, 255, 255, 0.85);
   --nav-shadow: inset 0 1px 0 #fff, 0 12px 30px rgba(90, 60, 40, 0.14);
   --z1: #3f7fbf; --z2: #2e9e68; --z3: #c79a14; --z4: #d9731c; --z5: #d93d3d;
+  --chart: #e0611f;
   color-scheme: light;
   }
 }
@@ -93,6 +98,7 @@
   --nav-border: rgba(255, 255, 255, 0.85);
   --nav-shadow: inset 0 1px 0 #fff, 0 12px 30px rgba(90, 60, 40, 0.14);
   --z1: #3f7fbf; --z2: #2e9e68; --z3: #c79a14; --z4: #d9731c; --z5: #d93d3d;
+  --chart: #e0611f;
   color-scheme: light;
 }
 :root[data-theme="dark"] {
@@ -119,6 +125,7 @@
   --nav-border: rgba(255, 255, 255, 0.22);
   --nav-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 30px rgba(0, 0, 0, 0.35);
   --z1: #6fa8dc; --z2: #4cc38a; --z3: #f2c94c; --z4: #f2994a; --z5: #eb5757;
+  --chart: #ff7a3d;
   color-scheme: dark;
 }
 
@@ -203,15 +210,23 @@ strong { font-weight: 800; }
 }
 .icon-btn:disabled { opacity: 0.3; cursor: default; }
 
+/* Same look as the floating nav: glass pill with a solid pill that slides to the selected option. */
 .segmented {
-  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 4px;
-  -webkit-backdrop-filter: var(--glass); backdrop-filter: var(--glass);
+  position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  background: var(--nav-bg); border: 1px solid var(--nav-border); border-radius: 999px; padding: 4px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(32px) saturate(1.9); backdrop-filter: blur(32px) saturate(1.9);
 }
 .segmented button {
-  min-height: 44px; border: 0; border-radius: 10px; background: transparent; color: var(--muted); font-weight: 700;
+  position: relative; z-index: 1; min-height: 40px; border: 0; border-radius: 999px; background: transparent;
+  color: var(--muted); font-weight: 700; font-size: 0.9rem; transition: color 0.3s;
 }
-.segmented button.active { background: var(--accent); color: var(--accent-ink); }
+.segmented button.active { color: var(--accent-ink); }
+.seg-indicator {
+  position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / var(--n, 2));
+  border-radius: 999px; background: var(--accent); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 0.4s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
 
 .done-btn {
   flex: none; width: var(--tap); height: var(--tap); border-radius: 50%;
@@ -313,28 +328,45 @@ strong { font-weight: 800; }
 .slot { font-size: 0.7rem; font-weight: 800; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 1px 5px; }
 .session-row.is-done .session-title span:first-of-type { text-decoration: line-through; text-decoration-color: var(--muted); }
 
-/* ---------- Plan: swipeable week/month ---------- */
+/* ---------- Plan: swipeable week / month ---------- */
 .swipeable { display: flex; flex-direction: column; gap: 12px; }
 .swipe-header { display: flex; align-items: center; gap: 10px; }
 .swipe-title { flex: 1; text-align: center; }
-.swipe-body { display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s ease-out; touch-action: pan-y; }
-.summary-card { gap: 8px; }
-.summary-card strong { font-size: 1.3rem; }
-.month-week { display: flex; flex-direction: column; gap: 8px; }
+/* The viewport reaches the screen edges so the next page slides in from the edge, not from the gutter.
+   Side pages are absolutely placed so only the current page sets the height. */
+.swipe-viewport { margin: 0 -16px; padding: 0 16px; overflow: clip; }
+.swipe-track { position: relative; touch-action: pan-y; will-change: transform; }
+.swipe-page { display: flex; flex-direction: column; gap: 12px; }
+.swipe-page.side { position: absolute; top: 0; left: 0; width: 100%; pointer-events: none; }
+.swipe-page.prev { transform: translateX(calc(-100% - 32px)); }
+.swipe-page.next { transform: translateX(calc(100% + 32px)); }
 
 /* ---------- Calendar ---------- */
-.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.calendar { display: grid; grid-template-columns: 40px repeat(7, 1fr); gap: 4px; }
 .cal-head { text-align: center; color: var(--muted); font-size: 0.75rem; font-weight: 700; padding: 4px 0; }
 .cal-cell {
   position: relative; aspect-ratio: 1 / 1.1; min-height: 46px; border-radius: 10px;
   border: 1px solid transparent; background: var(--surface);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0;
 }
+/* Days in the plan are tinted with their phase colour (--pc). */
+.cal-cell.in-plan { background: color-mix(in srgb, var(--pc) 24%, var(--surface)); }
 .cal-cell.outside { opacity: 0.35; }
 .cal-cell.is-today { border-color: var(--accent); }
-.cal-cell.selected { background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--text); }
+.cal-cell.in-week { box-shadow: inset 0 0 0 1.5px var(--pc); }
+.cal-cell.selected { box-shadow: inset 0 0 0 2px var(--text); }
 .cal-num { font-weight: 700; font-size: 0.95rem; }
-.cal-km { font-size: 0.65rem; color: var(--muted); font-weight: 700; }
+/* Left column: week number and its planned km. Tap to list the whole week. */
+.cal-week {
+  border: 0; border-radius: 10px; padding: 0; background: color-mix(in srgb, var(--pc) 12%, transparent);
+  border-left: 3px solid var(--pc); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+}
+.cal-week.selected { background: color-mix(in srgb, var(--pc) 35%, transparent); }
+.cal-week-num { font-size: 0.75rem; font-weight: 800; }
+.cal-week-km { font-size: 0.65rem; font-weight: 700; color: var(--muted); }
+.phase-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.phase-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.phase-legend i { width: 10px; height: 10px; border-radius: 3px; }
 .cal-dot { width: 6px; height: 6px; border-radius: 50%; }
 .cal-cell.all-done .cal-num { color: var(--accent); }
 
@@ -427,6 +459,45 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 .data-table th, .data-table td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--border); }
 .data-table th { color: var(--muted); font-weight: 700; }
 
+/* ---------- Progress: weekly + plan-to-date line charts ---------- */
+.progress-section { gap: 12px; }
+.period-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+.period-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.period-stats.four { grid-template-columns: repeat(4, 1fr); }
+.period-stats > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.period-stats strong { font-size: 1.35rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.period-stats strong .muted { font-size: 1rem; font-weight: 700; }
+.line-chart { width: 100%; }
+.line-chart svg { display: block; touch-action: pan-y; outline: none; -webkit-tap-highlight-color: transparent; }
+.line-chart .grid { stroke: var(--border); stroke-width: 1; stroke-dasharray: 3 5; stroke-linecap: round; }
+.line-chart .axis { fill: var(--muted); font-size: 11px; font-weight: 700; }
+.line-chart .guide { stroke: var(--chart); stroke-width: 2; stroke-dasharray: 2 4; stroke-linecap: round; opacity: 0.7; }
+.line-chart .value-line { fill: none; stroke: var(--chart); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.line-chart .compare-line { fill: none; stroke: var(--muted); stroke-width: 2; stroke-dasharray: 4 6; stroke-linecap: round; }
+.line-chart .dot-active { fill: var(--chart); stroke: var(--bg); stroke-width: 3; }
+.line-chart .dot-halo { fill: var(--chart); opacity: 0.18; }
+.line-chart .tip rect { fill: var(--text); }
+.line-chart .tip text { fill: var(--bg); font-size: 12px; font-weight: 800; }
+.key.line { height: 3px; border-radius: 2px; background: var(--chart); }
+.key.dashed { height: 0; border-top: 2px dashed var(--muted); border-radius: 0; }
+.select-pill {
+  position: relative; display: inline-flex; align-items: center; border-radius: 999px;
+  border: 1px solid var(--nav-border); background: var(--nav-bg);
+}
+.select-pill select {
+  appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--text);
+  font: inherit; font-weight: 700; font-size: 0.85rem; min-height: 36px; padding: 0 32px 0 14px;
+}
+.select-pill select:focus { outline: none; }
+.select-pill:has(select:focus-visible) { border-color: var(--accent); }
+.select-pill select option { background: var(--surface); color: var(--text); }
+.select-pill svg { position: absolute; right: 10px; pointer-events: none; color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.missed-item { display: flex; flex-direction: column; padding-top: 10px; }
+@media (max-width: 380px) {
+  .period-stats.four { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ---------- Profile ---------- */
 .zone-list { display: flex; flex-direction: column; gap: 10px; }
 .zone-card { border-left: 6px solid var(--zc); }
@@ -439,6 +510,26 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 .pace-inputs { display: flex; align-items: flex-end; gap: 8px; }
 .pace-inputs label { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; color: var(--muted); font-weight: 700; }
 .data-tools .btn { justify-content: flex-start; }
+
+/* Settings menu: grouped rows that open their own page. */
+.settings-group { display: flex; flex-direction: column; }
+.settings-group + .settings-group { margin-top: 10px; }
+.settings-group .eyebrow { padding-bottom: 4px; }
+.settings-row {
+  display: flex; align-items: center; gap: 14px; min-height: 58px; padding: 8px 0; width: 100%;
+  background: none; border: 0; border-bottom: 1px solid var(--border); text-align: left; color: var(--text);
+}
+.settings-icon {
+  width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center;
+  background: var(--surface-2); color: var(--text);
+}
+.settings-label { flex: 1; font-weight: 700; }
+.settings-value { color: var(--muted); font-size: 0.9rem; white-space: nowrap; }
+.settings-row > svg { color: var(--muted); flex: none; }
+.settings-page { display: flex; flex-direction: column; gap: 14px; animation: settings-in 0.25s ease-out; }
+.settings-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.settings-head h1 { font-size: 1.9rem; }
+@keyframes settings-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
 .message { font-weight: 700; font-size: 0.9rem; }
 .message.ok { color: var(--text); }
 .message.error { color: var(--danger); }
@@ -466,9 +557,9 @@ input:focus, textarea:focus { outline: none; border-color: var(--accent); }
 .log-form.flat { border-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .screen, .nav-indicator, .nav-item { animation: none; transition: none; }
+  .screen, .nav-indicator, .nav-item, .settings-page { animation: none; transition: none; }
   .sheet { animation: none; }
-  .swipe-body, .progress-fill, .done-btn { transition: none; }
+  .swipe-track, .progress-fill, .done-btn, .seg-indicator, .segmented button { transition: none; }
 }
 
 /* Today's run: big distance like the mock-up; a dot between the details. */

@@ -8,12 +8,14 @@ import SessionDetail from './screens/SessionDetail.jsx'
 
 const TABS = ['week', 'plan', 'progress', 'profile']
 
-// Reads "#/plan/s/2026-11-04-AM" into { tab: 'plan', sessionId: '2026-11-04-AM' }.
+// Reads "#/plan/s/2026-11-04-AM" into { tab: 'plan', sessionId: '2026-11-04-AM' }
+// and "#/profile/zones" into { tab: 'profile', section: 'zones' }.
 function parseHash() {
   const [, tab, s, id] = window.location.hash.split('/')
   return {
     tab: TABS.includes(tab) ? tab : 'week',
     sessionId: s === 's' && id ? decodeURIComponent(id) : null,
+    section: s && s !== 's' ? s : null,
   }
 }
 
@@ -46,7 +48,7 @@ export default function App() {
   return (
     <div className="app">
       <main key={route.tab} className="screen" aria-hidden={route.sessionId ? true : undefined}>
-        <Screen onOpenSession={openSession} />
+        <Screen onOpenSession={openSession} section={route.section} />
       </main>
       {route.sessionId && <SessionDetail id={route.sessionId} onClose={closeSession} />}
       {!route.sessionId && <BottomNav tab={route.tab} onChange={goTab} />}
