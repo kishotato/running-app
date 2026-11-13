@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useStore } from '../store.jsx'
-import { formatDay } from '../lib/dates.js'
+import { daysBetween, formatDay, todayISO } from '../lib/dates.js'
 import { sessionLabel } from '../lib/plan.js'
 import { paceFrom, paceRange } from '../lib/pace.js'
 import { hrZones, zoneColor, zoneLabel } from '../lib/zones.js'
@@ -32,6 +32,7 @@ const rpeColor = (n) => `hsl(${Math.round(210 - ((n - 1) / 9) * 210)} 70% 58%)`
 
 export default function SessionDetail({ id, onClose }) {
   const { plan } = useStore()
+  const race = plan.raceById[id]
   const session = plan.sessions[id]
 
   // Lock the page behind the sheet so only the sheet scrolls.
@@ -41,13 +42,17 @@ export default function SessionDetail({ id, onClose }) {
   }, [])
 
   return (
-    <div className="sheet" role="dialog" aria-modal="true" aria-label="Session details">
+    <div className="sheet" role="dialog" aria-modal="true" aria-label={race ? 'Race details' : 'Session details'}>
       <header className="sheet-head">
         <button type="button" className="icon-btn" onClick={onClose} aria-label="Back"><Icon name="back" /></button>
-        <span className="muted">{session ? formatDay(session.date, { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</span>
+        <span className="muted">
+          {race ? formatDay(race.date, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+            : session ? formatDay(session.date, { weekday: 'long', day: 'numeric', month: 'long' }) : ''}
+        </span>
       </header>
       <div className="sheet-body">
-        {!session
+        {race ? <RaceDetail race={race} onSaved={onClose} />
+          : !session
           ? <p className="empty">This session isn't in the current plan.</p>
           : (
             <>
@@ -279,6 +284,144 @@ function RpeDialog({ onClose }) {
         <button type="button" className="btn primary block" onClick={onClose}>Got it</button>
       </div>
     </div>
+  )
+}
+
+// ---------- Races ----------
+
+// Plan fields (before the race) and result fields (after it). All saved in the race's log.
+const RACE_TEXT_FIELDS = ['goal', 'backupGoal', 'pacing', 'carbsPerHour', 'fluidPerHour', 'fuelPlan', 'electrolytes',
+  'shoes', 'kit', 'startTime', 'logistics', 'distanceKm', 'duration', 'avgHr', 'place', 'fuelActual', 'wentWell', 'improve', 'notes']
+
+function RaceDetail({ race, onSaved }) {
+  const { logs, saveLog } = useStore()
+  const existing = logs[race.id] || {}
+  const [form, setForm] = useState(() => {
+    const f = { rpe: existing.rpe ?? null, feel: existing.feel ?? null }
+    for (const k of RACE_TEXT_FIELDS) f[k] = existing[k] ?? ''
+    if (f.goal === '') f.goal = race.goal ?? ''
+    return f
+  })
+  const [showRpe, setShowRpe] = useState(false)
+  const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e?.target ? e.target.value : e }))
+  const pace = paceFrom(Number(form.distanceKm || race.distanceKm), form.duration)
+  const days = daysBetween(todayISO(), race.date)
+
+  const submit = (e) => {
+    e.preventDefault()
+    // Any result detail implies you ran it. Plan fields (fuel, kit…) don't.
+    const ranIt = form.distanceKm !== '' || form.duration !== '' || form.place !== '' || form.rpe || form.feel
+    saveLog(race.id, { ...form, completed: !!existing.completed || !!ranIt, pace })
+    onSaved()
+  }
+
+  const text = (key, label, props = {}) => (
+    <label className="field">
+      <span>{label}</span>
+      <input type="text" value={form[key]} onChange={set(key)} {...props} />
+    </label>
+  )
+  const area = (key, label, placeholder, rows = 3) => (
+    <label className="field">
+      <span>{label}</span>
+      <textarea rows={rows} value={form[key]} onChange={set(key)} placeholder={placeholder} />
+    </label>
+  )
+
+  return (
+    <>
+      <p className="eyebrow">{race.priority} race{race.dateConfirmed === false ? ' · date to be confirmed' : ''}</p>
+      <TitleRow id={race.id} color="var(--accent)">{race.name}</TitleRow>
+
+      <div className="stat-grid">
+        <Stat label="Date" value={formatDay(race.date, { day: 'numeric', month: 'short', year: 'numeric' })} />
+        <Stat label="Distance" value={race.distanceKm ? `${race.distanceKm} km` : 'TBC'} />
+        <Stat label={days >= 0 ? 'Days to go' : 'Days ago'} value={String(Math.abs(days))} />
+      </div>
+
+      <form className="card flat log-form" onSubmit={submit}>
+        <h3>Goals</h3>
+        <div className="field-grid">
+          {text('goal', 'Goal (A)', { placeholder: 'e.g. sub-1:30' })}
+          {text('backupGoal', 'Fallback goal (B)', { placeholder: 'e.g. finish strong' })}
+        </div>
+        {area('pacing', 'Pacing plan', 'Start easy, hold X pace to halfway, push the last 25%…')}
+
+        <h3>Fuelling</h3>
+        <div className="field-grid">
+          {text('carbsPerHour', 'Carbs per hour (g)', { inputMode: 'numeric', placeholder: '60–90' })}
+          {text('fluidPerHour', 'Fluid per hour (ml)', { inputMode: 'numeric', placeholder: '500' })}
+        </div>
+        {area('fuelPlan', 'Fuel plan', 'Gel every 30 min, real food at aid stations, what you carry vs what you pick up…')}
+        {area('electrolytes', 'Salt, caffeine and electrolytes', 'Salt tabs per hour, caffeine timing…', 2)}
+
+        <h3>Kit and logistics</h3>
+        <div className="field-grid">
+          {text('shoes', 'Shoes', { placeholder: 'Model, any backup pair' })}
+          {text('startTime', 'Start time', { placeholder: '09:00' })}
+        </div>
+        {area('kit', 'Kit and mandatory gear', 'Vest, head torch, poles, waterproofs, spare layers…')}
+        {area('logistics', 'Travel, crew and drop bags', 'Travel, accommodation, who is crewing, where the drop bags go…')}
+
+        <h3>Result</h3>
+        <div className="field-grid">
+          <label className="field">
+            <span>Distance (km)</span>
+            <input type="number" inputMode="decimal" step="0.01" min="0" placeholder={race.distanceKm ?? 'Actual distance'}
+              value={form.distanceKm} onChange={set('distanceKm')} />
+          </label>
+          <label className="field">
+            <span>Finish time (h:mm:ss)</span>
+            <input type="text" inputMode="numeric" placeholder="1:29:30" value={form.duration} onChange={set('duration')} />
+          </label>
+          <label className="field">
+            <span>Avg HR</span>
+            <input type="number" inputMode="numeric" min="0" value={form.avgHr} onChange={set('avgHr')} />
+          </label>
+          <div className="field">
+            <span>Pace</span>
+            <output className="computed">{pace ? `${pace} /km` : '—'}</output>
+          </div>
+        </div>
+        {text('place', 'Position', { placeholder: 'Overall / age group' })}
+
+        <div className="field" role="group" aria-labelledby="rpe-label">
+          <span id="rpe-label" className="label-row">
+            RPE (effort 1–10)
+            <button type="button" className="help-btn" aria-label="What do the RPE numbers mean?" onClick={() => setShowRpe(true)}>
+              <Icon name="help" size={16} strokeWidth={2.4} />
+            </button>
+          </span>
+          <div className="chip-row rpe">
+            {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+              <button key={n} type="button" className={`chip${form.rpe === n ? ' active' : ''}`}
+                style={form.rpe === n ? { background: rpeColor(n), color: '#111' } : undefined}
+                aria-pressed={form.rpe === n} onClick={() => set('rpe')(form.rpe === n ? null : n)}>{n}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="field" role="group" aria-labelledby="feel-label">
+          <span id="feel-label">How did it feel?</span>
+          <div className="chip-row feel-row">
+            {FEELS.map((f) => (
+              <button key={f.value} type="button" className={`chip${form.feel === f.value ? ' active' : ''}`}
+                aria-pressed={form.feel === f.value} onClick={() => set('feel')(form.feel === f.value ? null : f.value)}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {area('fuelActual', 'What I actually ate and drank', 'What worked, what you could not stomach…')}
+        {area('wentWell', 'What went well', '')}
+        {area('improve', 'What to improve next time', '')}
+        {area('notes', 'Notes', 'Weather, course, crowd, anything else…')}
+
+        <button type="submit" className="btn primary block">Save</button>
+        {showRpe && <RpeDialog onClose={() => setShowRpe(false)} />}
+      </form>
+    </>
   )
 }
 

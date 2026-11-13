@@ -64,8 +64,8 @@ function Days({ days, onOpenSession }) {
 }
 
 function WeekProgress({ week, label }) {
-  const { logs } = useStore()
-  const stats = weekStats(week, logs)
+  const { plan, logs } = useStore()
+  const stats = weekStats(week, logs, plan.races)
   return (
     <div className="card flat week-progress">
       <div className="row-between">

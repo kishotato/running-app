@@ -18,7 +18,7 @@ export default function ThisWeek({ onOpenSession }) {
   const beforeStart = today < plan.firstDate
   const afterEnd = today > plan.lastDate
   const todayDay = plan.days[today]
-  const stats = weekStats(week, logs)
+  const stats = weekStats(week, logs, plan.races)
   const upcoming = week.days.filter((d) => d.date > today)
 
   return (

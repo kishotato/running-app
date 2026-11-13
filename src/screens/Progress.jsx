@@ -15,9 +15,9 @@ const RANGES = [
 ]
 
 export default function Progress({ onOpenSession }) {
-  const { plan } = useStore()
+  const { plan, logs } = useStore()
   const today = todayISO()
-  const races = [...(plan.meta.races || [])].sort((a, b) => a.date.localeCompare(b.date))
+  const races = plan.races
 
   return (
     <>
@@ -29,22 +29,28 @@ export default function Progress({ onOpenSession }) {
       <div className="race-list">
         {races.map((r) => {
           const days = daysBetween(today, r.date)
+          const done = !!logs[r.id]?.completed
+          const goal = logs[r.id]?.goal || r.goal
           return (
-            <div key={r.name} className={`card flat race-card prio-${r.priority}`}>
+            <div key={r.id} className={`card flat race-card prio-${r.priority}`} role="button" tabIndex={0}
+              onClick={() => onOpenSession(r.id)}
+              onKeyDown={(e) => { if (e.key === 'Enter') onOpenSession(r.id) }}>
               <div className="race-left">
                 <span className="prio">{r.priority}</span>
                 <div>
                   <div className="race-name">{r.name}</div>
-                  <div className="muted small">
-                    {formatDay(r.date, { day: 'numeric', month: 'short', year: 'numeric' })}
+                  <div className="race-meta">
+                    {formatDay(r.date, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
                     {r.dateConfirmed === false && ' (TBC)'}
-                    {r.distanceKm ? ` · ${r.distanceKm} km` : ''}
-                    {r.goal ? ` · Goal ${r.goal}` : ''}
+                    {' · '}{r.distanceKm ? `${r.distanceKm} km` : 'Distance TBC'}
                   </div>
+                  {goal && <div className="muted small">Goal {goal}</div>}
                 </div>
               </div>
               <div className="race-days">
-                {days >= 0 ? <><strong>{days}</strong><span>days</span></> : <span className="muted"><Icon name="flag" size={18} /> Done</span>}
+                {done ? <span className="race-done"><Icon name="check" size={18} strokeWidth={3} /> Done</span>
+                  : days >= 0 ? <><strong>{days}</strong><span>days</span></>
+                  : <span className="muted"><Icon name="flag" size={18} /> Passed</span>}
               </div>
             </div>
           )
@@ -68,7 +74,7 @@ function formatTime(sec) {
 function WeeklySection() {
   const { plan, logs } = useStore()
   const today = todayISO()
-  const [range, setRange] = useState('13')
+  const [range, setRange] = useState('4')
 
   // Monday-start weeks, ending with the current one.
   const thisWeek = startOfWeek(today)
@@ -128,7 +134,7 @@ function WeeklySection() {
   )
 }
 
-/** Totals from the first day of the plan up to today, plus a running total of km against the plan. */
+/** Totals from the first day of the plan up to today, plus weekly km done against planned. */
 function PlanToDate({ onOpenSession }) {
   const { plan, logs } = useStore()
   const today = todayISO()
@@ -142,12 +148,9 @@ function PlanToDate({ onOpenSession }) {
     .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
 
   // Running totals, one point per plan week up to the current one.
-  let doneSum = 0, plannedSum = 0
   const points = plan.weeks.filter((w) => w.startDate <= end).map((w) => {
     const s = periodStats(plan, logs, w.startDate, w.endDate < end ? w.endDate : end)
-    doneSum += s.km
-    plannedSum += s.plannedKm
-    return { date: w.startDate, value: round1(doneSum), compare: round1(plannedSum), week: w.weekNumber }
+    return { date: w.startDate, value: round1(s.km), compare: round1(s.plannedKm), week: w.weekNumber }
   })
   const [picked, setPicked] = useState(null)
   const active = picked != null && picked < points.length ? picked : points.length - 1
@@ -174,13 +177,8 @@ function PlanToDate({ onOpenSession }) {
               <span><i className="key line" /> Done</span>
               <span><i className="key dashed" /> Planned</span>
             </div>
-            {sel && (
-              <p className="chart-readout">
-                By week {sel.week}: <strong>{sel.value} km</strong> <span className="muted">of {sel.compare} km planned</span>
-              </p>
-            )}
             <LineChart points={points} active={active} onSelect={setPicked}
-              label="Running total of kilometres since the plan started, done versus planned" />
+              label="Kilometres each plan week, done versus planned" />
 
             {missed.length > 0 && (
               <details className="table-toggle missed">

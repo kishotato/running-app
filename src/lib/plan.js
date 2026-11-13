@@ -6,6 +6,11 @@ export function sessionId(date, session, index) {
   return `${date}-${session.slot || index + 1}`
 }
 
+/** Races aren't plan sessions, so they get their own stable id: "race-brighton-half-marathon". */
+export function raceId(race) {
+  return `race-${String(race.name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}`
+}
+
 /** Builds lookup tables once per plan. */
 export function indexPlan(plan) {
   const days = {} // date -> day (sessions have ids, plus a link to its week)
@@ -32,8 +37,14 @@ export function indexPlan(plan) {
       return week
     })
 
+  const races = [...(plan.plan?.races || [])]
+    .map((r) => ({ ...r, id: raceId(r) }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+
   return {
     raw: plan,
+    races,
+    raceById: Object.fromEntries(races.map((r) => [r.id, r])),
     meta: plan.plan,
     zones: plan.zones || [],
     strength: plan.strengthLibrary || {},
